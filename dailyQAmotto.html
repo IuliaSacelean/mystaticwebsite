@@ -6,22 +6,57 @@
     <title>Daily QA Motto</title>
     <style>
         body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
+            color: #fff;
         }
+
         .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
         }
+
         h1 {
-            color: #333;
+            font-size: 36px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #f1c40f;
+            letter-spacing: 2px;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        p {
+            font-size: 20px;
+            font-style: italic;
+            color: #ecf0f1;
+            margin-top: 10px;
+            animation: fadeIn 3s ease-out;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ecf0f1;
+            opacity: 0.7;
         }
     </style>
     <script>
@@ -41,6 +76,10 @@
 <body onload="getQAMotto()">
     <div class="container">
         <h1 id="motto">Loading...</h1>
+        <p>Stay inspired and keep testing!</p>
+        <div class="footer">
+            Powered by Your Daily QA Dose of Inspiration
+        </div>
     </div>
 </body>
 </html>
