@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily QA Motto</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+    <script>
+        function getQAMotto() {
+            const mottos = {
+                1: "Start the week strong: Test with purpose!",
+                2: "Tuesday Tune-up: Precision ensures quality!",
+                3: "Wednesday Wisdom: Every defect found is a win!",
+                4: "Thursday Thoroughness: Validate, Verify, Victory!",
+                5: "Friday Finish: Quality is a journey, not a destination!"
+            };
+            const today = new Date().getDay();
+            document.getElementById("motto").innerText = mottos[today] || "Enjoy your weekend!";
+        }
+    </script>
+</head>
+<body onload="getQAMotto()">
+    <div class="container">
+        <h1 id="motto">Loading...</h1>
+    </div>
+</body>
+</html>
