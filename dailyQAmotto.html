@@ -58,28 +58,59 @@
             color: #ecf0f1;
             opacity: 0.7;
         }
+
+        .motto-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
     </style>
     <script>
         function getQAMotto() {
             const mottos = {
-                1: "Start the week strong: Test with purpose!",
-                2: "Tuesday Tune-up: Precision ensures quality!",
-                3: "Wednesday Wisdom: Every defect found is a win!",
-                4: "Thursday Thoroughness: Validate, Verify, Victory!",
-                5: "Friday Finish: Quality is a journey, not a destination!"
+                1: {
+                    motto: "Start the week strong: Test with purpose!",
+                    image: "https://via.placeholder.com/500x300?text=Monday+QA+Motto"
+                },
+                2: {
+                    motto: "Tuesday Tune-up: Testing is like a relationship, it needs constant attention.", 
+                    image: "https://via.placeholder.com/500x300?text=Tuesday+QA+Motto"
+                },
+                3: {
+                    motto: "Wednesday Wisdom: I don’t always test, but when I do, I break everything.",
+                    image: "tester that found a bug.png"
+                    
+                },
+                4: {
+                    motto: "Thursday Thoroughness: Testing is like a marriage: you have to commit!",
+                    image: "https://via.placeholder.com/500x300?text=Thursday+QA+Motto"
+                },
+                5: {
+                    motto: "Friday Finish: Quality is a journey, not a destination!",
+                    image: "https://via.placeholder.com/500x300?text=Friday+QA+Motto"
+                }
             };
+
             const today = new Date().getDay();
-            document.getElementById("motto").innerText = mottos[today] || "Enjoy your weekend!";
+            const mottoInfo = mottos[today] || { motto: "Enjoy your weekend!", image: "https://via.placeholder.com/500x300?text=Weekend+QA+Motto" };
+
+            document.getElementById("motto").innerText = mottoInfo.motto;
+            document.getElementById("motto-image").src = mottoInfo.image;
         }
     </script>
 </head>
 <body onload="getQAMotto()">
     <div class="container">
         <h1 id="motto">Loading...</h1>
+        <img id="motto-image" class="motto-image" src="" alt="Daily QA Motto Image">
         <p>Stay inspired and keep testing!</p>
         <div class="footer">
-            Powered by Your Daily QA Dose of Inspiration
+            Powered by Daily QA Inspiration
         </div>
     </div>
 </body>
 </html>
+<!-- This HTML page displays a daily QA motto with a background gradient and an image. The motto changes based on the day of the week. -->
