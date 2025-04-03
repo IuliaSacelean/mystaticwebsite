@@ -13,6 +13,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily QA Motto</title>
+    <!-- Logo Integration -->
+    <img src="logo.png" class="logo" alt="Daily QA Boost Logo" style="width: 15%; height: auto;">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -26,6 +28,7 @@
             font-size-adjust: 0.35;
             padding-top: 0.5%;
             flex-direction: column;
+            
         }
 
         .container {
@@ -79,6 +82,17 @@
 
         .motto-image:hover {
             transform: scale(1.05);
+        }
+
+        .logo {
+            max-width: 80px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            padding-top: 5%;
+            text-wrap: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            animation: fadeIn 1s ease-out;
         }
 
         /* Cookie Banner Styles */
@@ -140,6 +154,9 @@
             .motto-image {
                 max-width: 100%;
             }
+            .logo {
+                max-width: 100px;
+            }
         }
     </style>
     <script>
@@ -188,11 +205,17 @@
 </head>
 <body onload="getQAMotto(); checkCookies()">
     <div class="container">
+       
         <h1 id="motto">Loading...</h1>
         <img id="motto-image" class="motto-image" src="" alt="Daily QA Motto Image">
         <p>Stay inspired and keep testing everything!</p>
         <div class="footer">
-            Powered by your Daily QA Dose
+            <div class="footer">
+                <img src="logo.png" class="logo" alt="Daily QA Boost Logo" style="width: 15%; height: auto;">
+                <p>© 2025 Daily QA Dose. All rights reserved.</p>
+                <p>Get your daily dose of QA inspiration! Join us for tips, tricks, and insights into the world of Quality Assurance.</p>
+            </div>
+            
         </div>
     </div>
 
