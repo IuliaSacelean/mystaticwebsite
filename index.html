@@ -7,13 +7,24 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      text-align: center;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      text-align: center;
     }
-    img {
-      max-width: 100%;
-      height: auto;
+    main {
+      flex-grow: 1;
+    }
+    header h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-top: 20px;
+    }
+    footer {
+      background-color: #f1f1f1;
+      padding: 10px 0;
     }
   </style>
 </head>
@@ -22,12 +33,10 @@
     <h1>Welcome to Daily QA Boost!</h1>
   </header>
   <main>
-    <img src="Daily QA Boost Inspiration logo.png" alt="Daily QA Boost Banner" style="width: 50%; height: auto;">
-    <p>Get your daily dose of QA inspiration!</p>
-    <p>Join us for tips, tricks, and insights into the world of Quality Assurance.</p>
+    <img src="Daily QA Boost Inspiration logo.png" alt="Daily QA Boost Banner" style="width: 35%; height: auto;">
   </main>
   <footer>
-    <p>&copy; 2025 Daily QA Dose . All rights reserved.</p>
+    <p>&copy; 2025 Daily QA Boost. All rights reserved.</p>
   </footer>
 </body>
 </html>
