@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-2GE589Z2W2');
-</script>
+      gtag('config', 'G-2GE589Z2W2');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily QA Motto</title>
@@ -25,7 +25,7 @@
             height: 100vh;
             font-size-adjust: 0.35;
             padding-top: 0.5%;
-
+            flex-direction: column;
         }
 
         .container {
@@ -79,6 +79,41 @@
 
         .motto-image:hover {
             transform: scale(1.05);
+        }
+
+        /* Cookie Banner Styles */
+        .cookie-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            width: 90%;
+            max-width: 500px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .cookie-banner button {
+            background: #f1c40f;
+            color: black;
+            border: none;
+            padding: 10px 15px;
+            font-weight: bold;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .cookie-banner button:hover {
+            background: #d4a90f;
         }
 
         @keyframes fadeIn {
@@ -138,9 +173,20 @@
             document.getElementById("motto").innerText = mottoInfo.motto;
             document.getElementById("motto-image").src = mottoInfo.image;
         }
+
+        function checkCookies() {
+            if (!localStorage.getItem("cookiesAccepted")) {
+                document.getElementById("cookie-banner").style.display = "block";
+            }
+        }
+
+        function acceptCookies() {
+            localStorage.setItem("cookiesAccepted", "true");
+            document.getElementById("cookie-banner").style.display = "none";
+        }
     </script>
 </head>
-<body onload="getQAMotto()">
+<body onload="getQAMotto(); checkCookies()">
     <div class="container">
         <h1 id="motto">Loading...</h1>
         <img id="motto-image" class="motto-image" src="" alt="Daily QA Motto Image">
@@ -148,6 +194,12 @@
         <div class="footer">
             Powered by your Daily QA Dose
         </div>
+    </div>
+
+    <!-- Cookie Banner -->
+    <div id="cookie-banner" class="cookie-banner">
+        🍪 This website uses cookies to improve your experience. By using this site, you agree to our use of cookies.
+        <button onclick="acceptCookies()">Accept</button>
     </div>
 </body>
 </html>
