@@ -1,2 +1,1 @@
-# mystaticwebsite
-static website
+Your Daily QA Dose
