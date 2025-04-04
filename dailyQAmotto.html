@@ -20,13 +20,13 @@
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(to right, #00c6ff, #0072ff);
-            margin: 70px;
+            margin: 25px;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            font-size-adjust: 0.35;
+            height: 150vh;
+            font-size-adjust: 0.30;
             
             flex-direction: column;
             
@@ -182,29 +182,41 @@
                 5: {
                     motto: "Friday Finish:🐞 I find bugs faster than they can hide! 🏃💨",
                     image: "runningbugs.jpeg"
+                },
+                6: {
+                    motto: "Ah, the Weekend Saga! Picture this: testers and bugs calling a truce every Friday evening. Testers retreat to recharge, sipping coffee by the fire, plotting strategies for Monday’s hunt. Meanwhile, bugs gather in their secret lairs, sharing tales of their greatest escapes and brushing up on their camouflage skills.\n\nCome Monday, the saga continues with an epic showdown—testers armed with fresh energy and sharp minds, and bugs trying every trick in the book to stay hidden. It’s a classic story of brains versus sneaky bugs, all set in the thrilling world of QA.",
+                    image: "A relaxing weekend scene for testers to rest before finding bugs on Monday.png"
+                },
+                0: {
+                    motto: "Ah, the Weekend Saga! Picture this: testers and bugs calling a truce every Friday evening. Testers retreat to recharge, sipping coffee by the fire, plotting strategies for Monday’s hunt. Meanwhile, bugs gather in their secret lairs, sharing tales of their greatest escapes and brushing up on their camouflage skills.\n\nCome Monday, the saga continues with an epic showdown—testers armed with fresh energy and sharp minds, and bugs trying every trick in the book to stay hidden. It’s a classic story of brains versus sneaky bugs, all set in the thrilling world of QA.",
+                    image: "A relaxing weekend scene for testers to rest before finding bugs on Monday.png"
                 }
             };
-
+    
             const today = new Date().getDay();
-            const mottoInfo = mottos[today] || { motto: "Enjoy your weekend!", image: "" };
-
+            const mottoInfo = mottos[today] || { motto: "Enjoy your weekend!", image: "A relaxing weekend scene for testers to rest before on Monday.png" };
+    
             document.getElementById("motto").innerText = mottoInfo.motto;
             document.getElementById("motto-image").src = mottoInfo.image;
         }
-
+    </script>
+    <script>
         function checkCookies() {
-            if (!localStorage.getItem("cookiesAccepted")) {
-                document.getElementById("cookie-banner").style.display = "block";
+            const cookieBanner = document.getElementById('cookie-banner');
+            const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+
+            if (!cookiesAccepted) {
+                cookieBanner.style.display = 'block';
             }
         }
 
         function acceptCookies() {
-            localStorage.setItem("cookiesAccepted", "true");
-            document.getElementById("cookie-banner").style.display = "none";
-        }
-    </script>
+            localStorage.setItem('cookiesAccepted', 'true');
+            document.getElementById('cookie-banner').style.display = 'none';
+        }  
+    </script>  
 </head>
-<body onload="getQAMotto(); checkCookies()">
+<body onload="getQAMotto(); checkCookies();">
     <div class="container">
        
         <h1 id="motto">Loading...</h1>
