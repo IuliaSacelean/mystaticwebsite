@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+    input { padding: 8px; margin: 5px; }
+    button { padding: 10px; cursor: pointer; }
+    .checkout-details { margin-top: 20px; border: 1px solid #ddd; padding: 15px; display: inline-block; }
+  </style>
+</head>
+<body>
+
+  <h1>Checkout</h1>
+  <h2>Login to Complete Purchase</h2>
+
+  <form onsubmit="saveUserData(); return false;">
+    <label>Username:</label>
+    <input type="text" id="username" value="test"><br>
+    <label>Password:</label>
+    <input type="password" id="password" value="testing"><br>
+    <button type="submit">Login & Checkout</button>
+  </form>
+
+  <div id="checkout-section" style="display: none;">
+    <h2>Order Summary</h2>
+    <p><strong>Logged in as:</strong> <span id="logged-user"></span></p>
+    <div class="checkout-details" id="checkout-items"></div>
+    <button onclick="confirmPurchase()">Confirm Purchase</button>
+  </div>
+
+  <script>
+    function saveUserData() {
+      let username = document.getElementById('username').value;
+      localStorage.setItem('loggedUser', username);
+      displayCheckout();
+    }
+
+
+  function displayCheckout() {
+    let user = localStorage.getItem('loggedUser');
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    document.getElementById('logged-user').innerText = user || "Guest";
+
+    let checkoutContainer = document.getElementById('checkout-items');
+    checkoutContainer.innerHTML = '';
+
+    if (cart.length === 0) {
+      checkoutContainer.innerHTML = '<p>No products in cart.</p>';
+    } else {
+      cart.forEach(item => {
+        checkoutContainer.innerHTML += `<p>${item.name} - $${item.price.toFixed(2)}</p>`;
+      });
+    }
+
+    document.getElementById('checkout-section').style.display = 'block';
+  }
+
+  function confirmPurchase() {
+    alert('Purchase confirmed! Thank you.');
+    localStorage.removeItem('cart');
+    localStorage.removeItem('loggedUser');
+  }
+
+  if (localStorage.getItem('loggedUser')) {
+    displayCheckout();
+  }
+
+
+
+    function confirmPurchase() {
+      alert('Purchase confirmed! Thank you.');
+      localStorage.removeItem('cart'); // Clear cart after purchase
+      localStorage.removeItem('loggedUser'); // Clear login data
+    }
+
+    // Display checkout if user is already logged in
+    if (localStorage.getItem('loggedUser')) {
+      displayCheckout();
+    }
+  </script>
+
+</body>
+</html>
+

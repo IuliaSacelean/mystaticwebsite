@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Automation Playground</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+    .product { border: 1px solid #ddd; padding: 15px; display: inline-block; }
+    img { width: 200px; height: auto; }
+    button { margin-top: 10px; padding: 10px; cursor: pointer; }
+    .login { margin-top: 20px; }
+    input { padding: 8px; margin: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome to the Test Automation Playground </h1>
+    <h2>Under Construction</h2>
+    <p>Feel Free to use the playground for your own automation project learning journey</p>
+
+  <!-- Product Section -->
+  <div class="product">
+    <img src="FrontBox.png" alt="QA Action Figure Box">
+    <h2>QA Action Figure Product</h2>
+    <p>Price: $19.99</p>
+    <button onclick="addToCart('Sample Product', 19.99)">Add to Cart</button>
+<a href="cart.html">View Cart</a>
+
+    
+  </div>
+  <script>
+    let cart = [];
+  
+    function addToCart(productName, price) {
+      cart.push({ name: productName, price: price });
+      localStorage.setItem('cart', JSON.stringify(cart)); // Store cart data
+      alert('Added to cart!'); // Confirmation
+    }
+  </script>
+  
+
+  <!-- Login Form -->
+  <div class="login">
+    <h2>Login</h2>
+    <form>
+      <label>Username:</label>
+      <input type="text" value="test"><br>
+      <label>Password:</label>
+      <input type="password" value="testing"><br>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+</body>
+</html>
