@@ -1,0 +1,26 @@
+.button {
+    background-color: #022142; /* Nice blue */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px; /* Smooth corners */
+    transition: background 0.3s ease;
+  }
+  
+  .button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  .button:active {
+    background-color: #022d5d; /* Even darker when clicked */
+  } 
+.button:disabled {
+    background-color: #cccccc; /* Greyed out */
+    cursor: not-allowed;
+  }
+.button:disabled:hover {
+    background-color: #cccccc; /* No hover effect */
+  }
+  

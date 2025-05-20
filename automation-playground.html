@@ -4,8 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Test Automation Playground</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+    body {  font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            margin: 25px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 125vh;
+            font-size-adjust: 0.75;
+            
+            flex-direction: column;
+          } 
     .product { border: 1px solid #ddd; padding: 15px; display: inline-block; }
     img { width: 200px; height: auto; }
     button { margin-top: 10px; padding: 10px; cursor: pointer; }
@@ -16,17 +28,16 @@
 <body>
 
   <h1>Welcome to the Test Automation Playground </h1>
-    <h2>Under Construction</h2>
-    <p>Feel Free to use the playground for your own automation project learning journey</p>
+    <h2>Feel Free to use the playground for your own automation project learning journey</h2>
+    <h3>Under construction still, some journeys are not perfect, but still usable for happy path e2e journey :) <h3>
 
   <!-- Product Section -->
   <div class="product">
     <img src="FrontBox.png" alt="QA Action Figure Box">
     <h2>QA Action Figure Product</h2>
     <p>Price: $19.99</p>
-    <button onclick="addToCart('Sample Product', 19.99)">Add to Cart</button>
-<a href="cart.html">View Cart</a>
-
+    <button class="button" onclick="addToCart('Sample Product', 19.99)">Add to Cart</button>
+     <a href="cart.html" class="button">View Cart</a>
     
   </div>
   <script>
@@ -40,7 +51,7 @@
   </script>
   
 
-  <!-- Login Form -->
+  <!-- Login Form 
   <div class="login">
     <h2>Login</h2>
     <form>
@@ -51,6 +62,6 @@
       <button type="submit">Login</button>
     </form>
   </div>
-
+-->
 </body>
 </html>
