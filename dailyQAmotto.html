@@ -4,7 +4,10 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
     <meta name="google-adsense-account" content="ca-pub-1200109181407050">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily QA Motto + Trivia</title>
+    <link rel="stylesheet" href="style.css" />
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -19,6 +22,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <p></p>
     <style>
+        
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(to right, #00c6ff, #0072ff);
@@ -225,6 +229,15 @@
         }  
     </script>  
 </head>
+<body>
+    <div class="game-container">
+      <h1>QA Trivia Challenge</h1>
+      <div id="question"></div>
+      <div id="answers"></div>
+      <p id="score"></p>
+    </div>
+    <script src="script.js"></script>
+  </body>
 <body onload="getQAMotto(); checkCookies();">
     <div class="container">
        
@@ -310,6 +323,6 @@ onclick="gtag('event', 'click', { 'event_category': 'Navigation', 'event_label':
     <div id="cookie-banner" class="cookie-banner">
         🍪 This website uses cookies to improve your experience. By using this site, you agree to our use of cookies.
        <p> <button onclick="acceptCookies()">Accept</button><button onclick="acceptCookies(false)">Decline</button></p>
-       
+   
 </body>
 </html>

@@ -23,4 +23,37 @@
 .button:disabled:hover {
     background-color: #cccccc; /* No hover effect */
   }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    text-align: center;
+    padding: 2rem;
+  }
+  .game-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 500px;
+    margin: auto;
+  }
+  button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  .correct {
+    background-color: #4CAF50;
+    color: white;
+  }
+  .incorrect {
+    background-color: #f44336;
+    color: white;
+  }
+  .answer-btn {
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
   
