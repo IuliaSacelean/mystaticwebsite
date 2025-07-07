@@ -1,6 +1,6 @@
 .button {
     background-color: #022142; /* Nice blue */
-    color: white;
+    color: rgb(255, 255, 255);
     border: none;
     padding: 12px 20px;
     font-size: 16px;
@@ -26,12 +26,14 @@
 
   body {
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    font-size: 48px;
+    color: #ffffff;
+    background: #bb5a10;
     text-align: center;
     padding: 2rem;
   }
   .game-container {
-    background: white;
+    background: rgb(194, 3, 3);
     padding: 2rem;
     border-radius: 10px;
     max-width: 500px;
