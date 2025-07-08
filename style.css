@@ -57,5 +57,10 @@
     font-size: 1rem;
     cursor: pointer;
   }
+  h2 {
+    color: #ffffff;
+    font-size: larger;
+    margin-bottom: 1rem;
+  }
   
   
