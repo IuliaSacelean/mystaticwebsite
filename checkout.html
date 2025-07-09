@@ -24,8 +24,8 @@
 </head>
 <body>
 
-  <h2>Checkout</h2>
-  <h2>Login to Complete Purchase (use any credentials) </h2>
+  <p>Checkout<p>
+  <p>Login to Complete Purchase (use any credentials) </p>
 
   <form onsubmit="saveUserData(); return false;">
     <label>Username:</label>
@@ -36,7 +36,7 @@
   </form>
 
   <div id="checkout-section" style="display: none;">
-    <h2>Order Summary</h2>
+    <p>Order Summary</p>
     <p><strong>Logged in as:</strong> <span id="logged-user"></span></p>
     <div class="checkout-details" id="checkout-items"></div>
     <button class="button" onclick="confirmPurchase()">Confirm Purchase</button>
