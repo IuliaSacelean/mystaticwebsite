@@ -79,6 +79,45 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .hall-of-fame {
+  margin-top: 40px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.hall-of-fame h2 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+#hof-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+#hof-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.nickname-entry {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.nickname-entry input {
+  padding: 8px;
+  width: 60%;
+  max-width: 300px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+
   </style>
   
   
@@ -390,8 +429,14 @@
         <label><input type="radio" name="q40" value="c"> test.runSerial()</label>
       </div>
     
+
       <button type="button" onclick="showPage(3)">← Previous</button>
-      <button type="submit">✅ Submit Quiz</button>
+      <div class="nickname-entry">
+        <label for="nickname">Enter your nickname (optional):</label>
+        <input type="text" id="nickname" name="nickname" maxlength="20" placeholder="e.g. QA Ninja" />
+      </div>
+      
+      <button type="submit" id="submitBtn">✅ Submit Quiz</button>
       <div class="result" id="result"></div>
     </div>
     
@@ -442,30 +487,116 @@
 };
 
 
-    document.getElementById("quizForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      let score = 0;
-      let total = Object.keys(correctAnswers).length;
+function renderHallOfFame() {
+  const hof = JSON.parse(localStorage.getItem("hallOfFame") || "[]");
+  const list = document.getElementById("hof-list");
+  list.innerHTML = "";
+  hof.reverse().forEach(entry => {
+    const li = document.createElement("li");
+    li.textContent = entry;
+    list.appendChild(li);
+  });
+}
 
-      for (let q in correctAnswers) {
-        const selected = document.querySelector(`input[name="${q}"]:checked`);
-        if (selected && selected.value === correctAnswers[q]) {
-          score++;
-        }
-      }
+  // Removed redundant declaration of correctAnswers
 
-      document.getElementById("result").textContent = `✅ Awesome! You scored ${score} out of ${total}`;
-    });
-  </script>
+  document.getElementById("quizForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  let score = 0;
+  let total = Object.keys(correctAnswers).length;
+
+  for (let q in correctAnswers) {
+    const selected = document.querySelector(`input[name="${q}"]:checked`);
+    if (selected && selected.value === correctAnswers[q]) {
+      score++;
+    }
+  }
+
+  // ✅ Set flag AFTER scoring
+  localStorage.setItem("quizSubmitted", "true");
+
+  const nicknameInput = document.getElementById("nickname");
+  const nickname = nicknameInput.value.trim() || "Anonymous";
+  const resultText = `✅ Awesome, ${nickname}! You scored ${score} out of ${total}`;
+  document.getElementById("result").textContent = resultText;
+
+  const hofEntry = `${nickname} – ${score}/${total}`;
+  let hof = JSON.parse(localStorage.getItem("hallOfFame") || "[]");
+  hof.push(hofEntry);
+  hof = hof.slice(-10);
+  localStorage.setItem("hallOfFame", JSON.stringify(hof));
+  renderHallOfFame();
+
+  // ✅ Hide submit button
+  const submitBtn = document.getElementById("submitBtn");
+  if (submitBtn) submitBtn.style.display = "none";
+
+  // ✅ Show restart button
+  const restartBtn = document.getElementById("restartBtn");
+  if (restartBtn) restartBtn.style.display = "inline-block";
+});
+function resetQuiz() {
+  localStorage.removeItem("quizSubmitted");
+  location.reload();
+}
+
+
+localStorage.setItem("quizSubmitted", "true");
+
+
+const nicknameInput = document.getElementById("nickname");
+const nickname = nicknameInput.value.trim() || "Anonymous";
+const resultText = `✅ Awesome, ${nickname}! You scored ${score} out of ${total}`;
+document.getElementById("result").textContent = resultText;
+
+// 🏆 Save to Hall of Fame
+const hofEntry = `${nickname} – ${score}/${total}`;
+let hof = JSON.parse(localStorage.getItem("hallOfFame") || "[]");
+hof.push(hofEntry);
+hof = hof.slice(-10); // Keep only the last 10 scores
+localStorage.setItem("hallOfFame", JSON.stringify(hof));
+renderHallOfFame();
+
+
+  // Load Hall of Fame on page load
+  window.onload = function () {
+  renderHallOfFame();
+
+  // Hide Submit button if quiz was already submitted
+  if (localStorage.getItem("quizSubmitted") === "true") {
+    const submitBtn = document.getElementById("submitBtn");
+    if (submitBtn) submitBtn.style.display = "none";
+
+    const restartBtn = document.getElementById("restartBtn");
+    if (restartBtn) restartBtn.style.display = "inline-block";
+  }
+};
+
+</script>
+
 
 <script>
   function showPage(pageNum) {
     const pages = document.querySelectorAll('.quiz-page');
     pages.forEach(p => p.style.display = 'none');
     document.getElementById(`page${pageNum}`).style.display = 'block';
+    document.getElementById("restartBtn").style.display = "inline-block";
   }
 </script>
 
+
+  </script>
+
+  <button id="restartBtn" style="display: none;" onclick="resetQuiz()">🔄 Restart Quiz</button>
+
+  
+
+<section class="hall-of-fame">
+  <h2>🏆 Hall of Fame</h2>
+  <ul id="hof-list">
+    <!-- Scores will be added here -->
+  </ul>
+</section>
 
 </body>
 </html>
