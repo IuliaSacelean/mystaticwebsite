@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>🛡️ QA Quest: The Bug Slayer’s Trial</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #f4f4f4;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .quest-page {
+      display: none;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .quest-page.active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .progress {
+      height: 20px;
+      background: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #27ae60;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    #victory-screen {
+      display: none;
+      text-align: center;
+    }
+
+    .hall-of-fame {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    #hof-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    #hof-list li {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <img src="/Users/iuliacarla/Downloads/pyro.png" alt="Python Mascot" style="max-width: 120px;" />
+      </div>
+         
+  <h1>🛡️ QA Quest: The Bug Slayer’s Trial</h1>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+  <form id="qaQuestForm">
+    <!-- 10 Questions -->
+    <div class="quest-page active" id="quest1">
+        <h2>Challenge 1</h2>
+        <p>What is the output of <code>print(type([]))</code>?</p>
+        <label><input type="radio" name="q1" value="a"> &lt;type 'list'&gt;</label>
+        <label><input type="radio" name="q1" value="b"> &lt;class 'list'&gt;</label>
+        <label><input type="radio" name="q1" value="c"> list</label>
+        <button type="button" onclick="nextChallenge(1)">Next →</button>
+      </div>
+      
+      <div class="quest-page" id="quest2">
+        <h2>Challenge 2</h2>
+        <p>Which keyword is used to define a function in Python?</p>
+        <p style="font-style: italic; color: #555;">🐍 Pyro says: “Think carefully, young coder!”</p>
+        <label><input type="radio" name="q2" value="a"> func</label>
+        <label><input type="radio" name="q2" value="b"> define</label>
+        <label><input type="radio" name="q2" value="c"> def</label>
+        <button type="button" onclick="nextChallenge(2)">Next →</button>
+      </div>
+      
+      <div class="quest-page" id="quest3">
+        <h2>Challenge 3</h2>
+        <p>What does the <code>len()</code> function do?</p>
+        <p style="font-style: italic; color: #555;">🐍 Pyro says: “Think carefully, young coder!”</p>
+        <label><input type="radio" name="q3" value="a"> Returns the number of characters in a string</label>
+        <label><input type="radio" name="q3" value="b"> Returns the number of items in an object</label>
+        <label><input type="radio" name="q3" value="c"> Both a and b</label>
+        <button type="button" onclick="nextChallenge(3)">Next →</button>
+      </div>
+      
+      <div class="quest-page" id="quest4">
+        <h2>Challenge 4</h2>
+        <p style="font-style: italic; color: #555;">🐍 Pyro says: “Think carefully, young coder!”</p>
+        <p>Which of the following is a valid variable name in Python?</p>
+        <label><input type="radio" name="q4" value="a"> 2value</label>
+        <label><input type="radio" name="q4" value="b"> value_2</label>
+        <label><input type="radio" name="q4" value="c"> value-2</label>
+        <button type="button" onclick="nextChallenge(4)">Next →</button>
+      </div>
+      
+      <div class="quest-page" id="quest5">
+        <h2>Challenge 5</h2>
+        <p>What is the output of <code>bool(0)</code> in Python?</p>
+        <p style="font-style: italic; color: #555;">🐍 Pyro says: “Think carefully, young coder!”</p>
+        <label><input type="radio" name="q5" value="a"> True</label>
+        <label><input type="radio" name="q5" value="b"> False</label>
+        <label><input type="radio" name="q5" value="c"> None</label>
+        <button type="button" onclick="nextChallenge(5)">Next →</button>
+      </div>
+      
+      <div class="quest-page" id="quest6">
+        <h2>Challenge 6</h2>
+        <p>How do you insert comments in Python code?</p>
+        <p style="font-style: italic; color: #555;">🐍 Pyro says: “Think carefully, young coder!”</p>
+        <label><input type="radio" name="q6" value="a"> // This is a comment</label>
+        <label><input type="radio" name="q6" value="b"> &lt;!-- This is a comment --&gt;</label>
+        <label><input type="radio" name="q6" value="c"> # This is a comment</label>
+        <button type="button" onclick="nextChallenge(6)">Next →</button>
+      </div>
+      
+      <div class="quest-page" id="quest7">
+        <h2>Challenge 7</h2>
+        <p style="font-style: italic; color: #555;">🐍 Pyro says: “Think carefully, young coder!”</p>
+        <p>What is the correct way to create a dictionary in Python?</p>
+        <label><input type="radio" name="q7" value="a"> dict = { "key": "value" }</label>
+        <label><input type="radio" name="q7" value="b"> dict = [ "key" =&gt; "value" ]</label>
+        <label><input type="radio" name="q7" value="c"> dict = ( "key", "value" )</label>
+        <button type="button" onclick="nextChallenge(7)">Next →</button>
+      </div>
+      
+      <div class="quest-page" id="quest8">
+        <h2>Challenge 8</h2>
+        <p style="font-style: italic; color: #555;">🐍 Pyro says: “Think carefully, young coder!”</p>
+        <p>Which operator is used for exponentiation in Python?</p>
+        <label><input type="radio" name="q8" value="a"> ^</label>
+        <label><input type="radio" name="q8" value="b"> **</label>
+        <label><input type="radio" name="q8" value="c"> %</label>
+        <button type="button" onclick="nextChallenge(8)">Next →</button>
+      </div>
+      
+      <div class="quest-page" id="quest9">
+        <h2>Challenge 9</h2>
+        <p style="font-style: italic; color: #555;">🐍 Pyro says: “Think carefully, young coder!”</p>
+        <p>What is the output of <code>print("Hello" + str(5))</code>?</p>
+        <label><input type="radio" name="q9" value="a"> Hello5</label>
+        <label><input type="radio" name="q9" value="b"> Hello 5</label>
+        <label><input type="radio" name="q9" value="c"> Error</label>
+        <button type="button" onclick="nextChallenge(9)">Next →</button>
+      </div>
+      
+      <div class="quest-page" id="quest10">
+        <h2>Final Challenge</h2>
+        <p style="font-style: italic; color: #555;">🐍 Pyro says: “Think carefully, young coder!”</p>
+        <p>Which of the following is used to handle exceptions in Python?</p>
+        <label><input type="radio" name="q10" value="a"> try/except</label>
+        <label><input type="radio" name="q10" value="b"> do/catch</label>
+        <label><input type="radio" name="q10" value="c"> if/error</label>
+        <button type="button" onclick="finishQuest()">🏁 Finish Quest</button>
+      </div>
+    </form>      
+
+  <div id="victory-screen">
+    <h2>🎉 Victory!</h2>
+    <p id="xp-earned"></p>
+    <input type="text" id="heroName" placeholder="Enter your hero name" />
+    <br><br>
+    <button id="submitHOFBtn" onclick="saveToHallOfFame()">🏆 Enter Hall of Fame</button>
+    <button id="restartBtn" onclick="restartQuest()" style="display: none;">🔄 Restart Quest</button>
+  </div>
+  
+
+  <div class="hall-of-fame">
+    <h2>🏆 Hall of Fame</h2>
+    <ul id="hof-list"></ul>
+  </div>
+
+  <script>
+   const correctAnswers = {
+  q1: "b", q2: "c", q3: "c", q4: "b", q5: "b",
+  q6: "c", q7: "a", q8: "b", q9: "a", q10: "a"
+}
+
+    let xp = 0;
+
+    function nextChallenge(current) {
+      const selected = document.querySelector(`input[name="q${current}"]:checked`);
+      if (selected && selected.value === correctAnswers[`q${current}`]) {
+        xp += 10;
+      }
+      document.getElementById(`quest${current}`).classList.remove("active");
+      document.getElementById(`quest${current + 1}`).classList.add("active");
+      updateProgress(current + 1);
+
+    }
+
+    function updateProgress(step) {
+      const percent = (step / 10) * 100;
+      document.getElementById("progressBar").style.width = percent + "%";
+    }
+
+    function finishQuest() {
+      const selected = document.querySelector(`input[name="q10"]:checked`);
+      if (selected && selected.value === correctAnswers.q10) {
+        xp += 10;
+      }
+
+      document.getElementById("qaQuestForm").style.display = "none";
+      document.getElementById("victory-screen").style.display = "block";
+      document.getElementById("xp-earned").textContent = `You earned ${xp} XP!`;
+
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    }
+
+    function saveToHallOfFame() {
+  const name = document.getElementById("heroName").value.trim() || "Anonymous Hero";
+  const entry = `${name} – ${xp} XP`;
+  let hof = JSON.parse(localStorage.getItem("qaQuestHOF") || "[]");
+  hof.push(entry);
+  hof = hof.slice(-10);
+  localStorage.setItem("qaQuestHOF", JSON.stringify(hof));
+  renderHallOfFame();
+
+  // ✅ Hide submit button and show restart
+  document.getElementById("submitHOFBtn").style.display = "none";
+  document.getElementById("restartBtn").style.display = "inline-block";
+}
+
+
+    function renderHallOfFame() {
+      const hof = JSON.parse(localStorage.getItem("qaQuestHOF") || "[]");
+      const list = document.getElementById("hof-list");
+      list.innerHTML = "";
+      hof.reverse().forEach(entry => {
+        const li = document.createElement("li");
+        li.textContent = entry;
+        list.appendChild(li);
+      });
+    }
+
+    function restartQuest() {
+    xp = 0;
+    localStorage.removeItem("quizSubmitted");
+    location.reload();
+}
+
+
+    window.onload = renderHallOfFame;
+  </script>
+
+</body>
+</html>

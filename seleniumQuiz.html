@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selenium Automation Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #f4f4f4;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .question {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .result {
+      font-size: 18px;
+      font-weight: bold;
+      color: #27ae60;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .hall-of-fame {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-top: 40px;
+    }
+
+    #hof-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    #hof-list li {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .nickname-entry {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .nickname-entry input {
+      padding: 8px;
+      width: 60%;
+      max-width: 300px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧪 Selenium Automation Quiz</h1>
+
+  <div class="nickname-entry">
+    <label for="nickname">Enter your nickname (optional):</label><br>
+    <input type="text" id="nickname" name="nickname" maxlength="20" placeholder="e.g. TestNinja" />
+  </div>
+
+  <form id="quizForm">
+    <div class="question">
+      <h3>1. What is Selenium WebDriver primarily used for?</h3>
+      <label><input type="radio" name="q1" value="a"> Unit testing</label>
+      <label><input type="radio" name="q1" value="b"> Automating web browsers</label>
+      <label><input type="radio" name="q1" value="c"> Database testing</label>
+    </div>
+
+    <div class="question">
+      <h3>2. Which language is NOT officially supported by Selenium WebDriver?</h3>
+      <label><input type="radio" name="q2" value="a"> Java</label>
+      <label><input type="radio" name="q2" value="b"> Python</label>
+      <label><input type="radio" name="q2" value="c"> PHP</label>
+    </div>
+
+    <div class="question">
+      <h3>3. What method is used to find an element by its ID?</h3>
+      <label><input type="radio" name="q3" value="a"> findElementByClass()</label>
+      <label><input type="radio" name="q3" value="b"> findElement(By.id("..."))</label>
+      <label><input type="radio" name="q3" value="c"> getElementById()</label>
+    </div>
+
+    <div class="question">
+      <h3>4. Which browser is NOT directly supported by Selenium WebDriver?</h3>
+      <label><input type="radio" name="q4" value="a"> Chrome</label>
+      <label><input type="radio" name="q4" value="b"> Safari</label>
+      <label><input type="radio" name="q4" value="c"> Opera Mini</label>
+    </div>
+
+    <div class="question">
+      <h3>5. What is the purpose of WebDriverWait?</h3>
+      <label><input type="radio" name="q5" value="a"> To pause the test for a fixed time</label>
+      <label><input type="radio" name="q5" value="b"> To wait until a condition is met</label>
+      <label><input type="radio" name="q5" value="c"> To delay the browser launch</label>
+    </div>
+
+    <div class="question">
+      <h3>6. Which command is used to switch to an alert?</h3>
+      <label><input type="radio" name="q6" value="a"> driver.switchTo().frame()</label>
+      <label><input type="radio" name="q6" value="b"> driver.switchTo().alert()</label>
+      <label><input type="radio" name="q6" value="c"> driver.handleAlert()</label>
+    </div>
+
+    <div class="question">
+      <h3>7. What does driver.quit() do?</h3>
+      <label><input type="radio" name="q7" value="a"> Closes the current tab</label>
+      <label><input type="radio" name="q7" value="b"> Closes all browser windows and ends the session</label>
+      <label><input type="radio" name="q7" value="c"> Minimizes the browser</label>
+    </div>
+
+    <div class="question">
+      <h3>8. Which locator strategy is the most brittle?</h3>
+      <label><input type="radio" name="q8" value="a"> By.id</label>
+      <label><input type="radio" name="q8" value="b"> By.name</label>
+      <label><input type="radio" name="q8" value="c"> By.xpath</label>
+    </div>
+
+    <div class="question">
+      <h3>9. What is Page Object Model (POM)?</h3>
+      <label><input type="radio" name="q9" value="a"> A design pattern for organizing test code</label>
+      <label><input type="radio" name="q9" value="b"> A browser plugin</label>
+      <label><input type="radio" name="q9" value="c"> A Selenium command</label>
+    </div>
+
+    <div class="question">
+      <h3>10. What is the default timeout for implicit wait in Selenium?</h3>
+      <label><input type="radio" name="q10" value="a"> 0 seconds</label>
+      <label><input type="radio" name="q10" value="b"> 30 seconds</label>
+      <label><input type="radio" name="q10" value="c"> 10 seconds</label>
+    </div>
+
+    <button type="submit" id="submitBtn">✅ Submit Quiz</button>
+    <button type="button" id="restartBtn" onclick="resetQuiz()" style="display: none;">🔄 Restart Quiz</button>
+    <div class="result" id="result"></div>
+  </form>
+
+  <div class="hall-of-fame">
+    <h2>🏆 Hall of Fame</h2>
+    <ul id="hof-list"></ul>
+  </div>
+
+  <script>
+    const correctAnswers = {
+      q1: "b", q2: "c", q3: "b", q4: "c", q5: "b",
+      q6: "b", q7: "b", q8: "c", q9: "a", q10: "a"
+    };
+
+    let quizAlreadySubmitted = false;
+
+    document.getElementById("quizForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (quizAlreadySubmitted) return;
+      quizAlreadySubmitted = true;
+
+      let score = 0;
+      let total = Object.keys(correctAnswers).length;
+
+      for (let q in correctAnswers) {
+        const selected = document.querySelector(`input[name="${q}"]:checked`);
+        if (selected && selected.value === correctAnswers[q]) {
+          score++;
+        }
+      }
+
+      localStorage.setItem("quizSubmitted", "true");
+
+const nicknameInput = document.getElementById("nickname");
+const nickname = nicknameInput?.value.trim() || "Anonymous";
+const resultText = `✅ Awesome, ${nickname}! You scored ${score} out of ${total}`;
+document.getElementById("result").textContent = resultText;
+
+// Save to Hall of Fame
+const hofEntry = `${nickname} – ${score}/${total}`;
+let hof = JSON.parse(localStorage.getItem("hallOfFame") || "[]");
+hof.push(hofEntry);
+hof = hof.slice(-10); // Keep only the last 10 scores
+localStorage.setItem("hallOfFame", JSON.stringify(hof));
+renderHallOfFame();
+
+// Hide submit button
+const submitBtn = document.getElementById("submitBtn");
+if (submitBtn) submitBtn.style.display = "none";
+
+// Show restart button
+const restartBtn = document.getElementById("restartBtn");
+if (restartBtn) restartBtn.style.display = "inline-block";
+});
+
+function renderHallOfFame() {
+const hof = JSON.parse(localStorage.getItem("hallOfFame") || "[]");
+const list = document.getElementById("hof-list");
+list.innerHTML = "";
+hof.reverse().forEach(entry => {
+  const li = document.createElement("li");
+  li.textContent = entry;
+  list.appendChild(li);
+});
+}
+
+function resetQuiz() {
+localStorage.removeItem("quizSubmitted");
+location.reload();
+}
+
+window.onload = function () {
+renderHallOfFame();
+
+const submitBtn = document.getElementById("submitBtn");
+const restartBtn = document.getElementById("restartBtn");
+
+if (localStorage.getItem("quizSubmitted") === "true") {
+  if (submitBtn) submitBtn.style.display = "none";
+  if (restartBtn) restartBtn.style.display = "inline-block";
+} else {
+  if (submitBtn) submitBtn.style.display = "inline-block";
+  if (restartBtn) restartBtn.style.display = "none";
+}
+};
+</script>
+</body>
+</html>
