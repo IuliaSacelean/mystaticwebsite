@@ -161,9 +161,10 @@ const questions = [
   }
   
   function endGame() {
-    questionEl.textContent = "Game Over!";
+    questionEl.textContent = "Awesome! You've completed the quiz!";
     answersEl.innerHTML = "";
-    scoreEl.textContent = `Your score: ${score}/${questions.length}`;
+    scoreEl.textContent = `Your score is: ${score}/${questions.length}`;
+    scoreEl.style.fontSize = "44px";
   }
   
   showQuestion();
