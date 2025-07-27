@@ -2,59 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Star Wars Quote Puzzle</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #0d0d0d;
-      color: #fff;
+      color: #f5f5f5;
+      max-width: 800px;
+      margin: auto;
       padding: 20px;
-      text-align: center;
     }
     h1 {
-      color: #ffe81f;
+      text-align: center;
     }
     .quote-card {
-      background: #222;
-      border: 1px solid #444;
-      border-radius: 10px;
+      background: #1a1a1a;
       padding: 15px;
-      margin: 15px auto;
-      max-width: 600px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
     }
     select {
       margin-top: 10px;
-      padding: 5px;
+      width: 100%;
+      padding: 8px;
       font-size: 16px;
+      border-radius: 6px;
     }
     button {
-      margin-top: 20px;
       padding: 10px 20px;
-      font-size: 18px;
-      background: #ffe81f;
+      margin-top: 20px;
+      width: 100%;
+      background-color: #ffd700;
+      color: #000;
+      font-size: 16px;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
     }
-    button:hover {
-      background: #fff200;
-    }
-    .result {
-      font-size: 24px;
-      margin-top: 20px;
+    #shareBtn {
+      margin-top: 10px;
+      background: #007aff;
+      color: white;
     }
   </style>
 </head>
 <body>
-
-  <h1>⭐ Star Wars: Quote Match ⭐</h1>
-  <p>Match the quote to the correct character!</p>
-
+  <h1>🌌 Star Wars Quote Puzzle</h1>
   <div id="quiz-container"></div>
-
-  <button onclick="nextPage()" id="nextBtn">Next Page</button>
-  <div class="result" id="result"></div>
+  <button id="nextBtn" onclick="nextPage()">Next Page</button>
+  <button id="shareBtn" onclick="shareApp()">Share this App</button>
+  <p id="result"></p>
 
   <script>
     const baseQuotes = [
@@ -62,18 +61,58 @@
       { quote: "So this is how liberty dies… with thunderous applause.", answer: "Padmé" },
       { quote: "You were the Chosen One! It was said that you would destroy the Sith, not join them!", answer: "Obi-Wan" },
       { quote: "The dark side of the Force is a pathway to many abilities some consider to be unnatural.", answer: "Palpatine" },
-      { quote: "This is where the fun begins.", answer: "Anakin" }
+      { quote: "This is where the fun begins.", answer: "Anakin" },
+      { quote: "You turned her against me!", answer: "Anakin" },
+      { quote: "Only a Sith deals in absolutes.", answer: "Obi-Wan" },
+      { quote: "I find your lack of faith disturbing.", answer: "Darth Vader" },
+      { quote: "I’ve brought peace, freedom, justice, and security to my new empire.", answer: "Anakin" },
+      { quote: "There is still good in him.", answer: "Padmé" },
+      { quote: "I will be the most powerful Jedi ever.", answer: "Anakin" },
+      { quote: "My allegiance is to the Republic, with democracy!", answer: "Obi-Wan" },
+      { quote: "The Jedi are selfless. They only care about others.", answer: "Anakin" },
+      { quote: "I've been dying a little bit each day since you came back into my life.", answer: "Padmé" },
+      { quote: "Power! Unlimited power!", answer: "Palpatine" },
+      { quote: "If you're not with me, then you're my enemy!", answer: "Anakin" },
+      { quote: "Anakin is gone. I am what remains.", answer: "Darth Vader" },
+      { quote: "I am the Senate!", answer: "Palpatine" },
+      { quote: "A surprise, to be sure, but a welcome one.", answer: "Palpatine" },
+      { quote: "I sense great fear in you, Skywalker.", answer: "Count Dooku" },
+      { quote: "I shouldn’t have done that. It’s not the Jedi way.", answer: "Anakin" },
+      { quote: "Your focus determines your reality.", answer: "Qui-Gon Jinn" },
+      { quote: "I have a bad feeling about this.", answer: "Obi-Wan" },
+      { quote: "There’s always a bigger fish.", answer: "Qui-Gon Jinn" },
+      { quote: "Fear leads to anger, anger leads to hate, hate leads to suffering.", answer: "Yoda" },
+      { quote: "I am a Jedi, like my father before me.", answer: "Luke Skywalker" },
+      { quote: "Do it.", answer: "Palpatine" },
+      { quote: "Help me, Obi-Wan Kenobi. You’re my only hope.", answer: "Leia" },
+      { quote: "No. I am your father.", answer: "Darth Vader" },
+      { quote: "You were my brother, Anakin. I loved you.", answer: "Obi-Wan" },
+      { quote: "Your overconfidence is your weakness.", answer: "Luke Skywalker" },
+      { quote: "You underestimate my power!", answer: "Anakin" },
+      { quote: "I am one with the Force. The Force is with me.", answer: "Chirrut Îmwe" },
+      { quote: "Chewie, we’re home.", answer: "Han Solo" },
+      { quote: "That’s not how the Force works!", answer: "Han Solo" },
+      { quote: "Never tell me the odds!", answer: "Han Solo" },
+      { quote: "I’ll never turn to the dark side.", answer: "Luke Skywalker" },
+      { quote: "Let the past die. Kill it, if you have to.", answer: "Kylo Ren" },
+      { quote: "I see through the lies of the Jedi.", answer: "Anakin" },
+      { quote: "You will pay the price for your lack of vision!", answer: "Palpatine" },
+      { quote: "I have the high ground!", answer: "Obi-Wan" },
+      { quote: "We’re keepers of the peace, not soldiers.", answer: "Obi-Wan" },
+      { quote: "The Jedi must end.", answer: "Luke Skywalker" },
+      { quote: "Love won’t save you, Anakin.", answer: "Padmé" },
+      { quote: "The Republic will be reorganized into the first Galactic Empire.", answer: "Palpatine" },
+      { quote: "You’re fulfilling your destiny.", answer: "Palpatine" },
+      { quote: "The Force is what gives a Jedi his power.", answer: "Obi-Wan" },
+      { quote: "I’m just a simple man trying to make my way in the universe.", answer: "Jango Fett" },
+      { quote: "In my experience, there is no such thing as luck.", answer: "Obi-Wan" }
     ];
-    const options = ["Anakin", "Padmé", "Obi-Wan", "Palpatine"];
-    const total = 50;
+
+    const options = [...new Set(baseQuotes.map(q => q.answer))].sort();
+    const total = baseQuotes.length;
     const perPage = 10;
     let answers = new Array(total).fill(null);
     let currentPage = 0;
-
-    const fullQuotes = Array.from({ length: total }, (_, i) => {
-      const base = baseQuotes[i % baseQuotes.length];
-      return { quote: base.quote + ` (${i + 1})`, answer: base.answer };
-    });
 
     function renderPage() {
       const container = document.getElementById('quiz-container');
@@ -84,7 +123,7 @@
         const card = document.createElement('div');
         card.className = 'quote-card';
         card.innerHTML = `
-          <p><strong>"${fullQuotes[i].quote}"</strong></p>
+          <p><strong>"${baseQuotes[i].quote}"</strong></p>
           <select id="q${i}">
             <option value="">-- Choose --</option>
             ${options.map(o => `<option value="${o}" ${answers[i] === o ? 'selected' : ''}>${o}</option>`).join('')}
@@ -104,13 +143,26 @@
       }
 
       if (end >= total) {
-        const score = answers.reduce((acc, val, i) => acc + (val === fullQuotes[i].answer ? 1 : 0), 0);
+        const score = answers.reduce((acc, val, i) => acc + (val === baseQuotes[i].answer ? 1 : 0), 0);
         document.getElementById('quiz-container').innerHTML = '';
         document.getElementById('nextBtn').style.display = 'none';
+        document.getElementById('shareBtn').style.display = 'block';
         document.getElementById('result').innerHTML = `⭐ You scored <strong>${score}/${total}</strong>!`;
       } else {
         currentPage++;
         renderPage();
+      }
+    }
+
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Star Wars Quote Puzzle',
+          text: 'Test your Star Wars quote knowledge!',
+          url: window.location.href
+        });
+      } else {
+        alert('Sharing is not supported on this device.');
       }
     }
 
