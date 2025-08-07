@@ -127,8 +127,8 @@
     </div>
 
     <div class="panel">
-      <h2>🛰️ E2E Test Console</h2>
-      <button onclick="openPopup('e2ePopup')">Initiate E2E Diagnostic</button>
+      <h2>🛰️ Initiate Astromech Sync</h2>
+      <button onclick="openPopup('e2ePopup')">Ensures droid systems are synced and operational</button>
     </div>
 
     <div class="panel">
@@ -169,7 +169,7 @@
   <div id="e2ePopup" class="popup">
     <button class="close-btn" onclick="closePopup('e2ePopup')">✖</button>
     <h3>System Diagnostic Console</h3>
-    <p>Start full E2E system check:</p>
+    <p>Start Checks</p>
     <button onclick="runE2ETest()">Run Test</button>
     <p id="e2eResult"></p>
   </div>
@@ -223,7 +223,7 @@
       const result = document.getElementById('e2eResult');
       result.textContent = '🔄 Running diagnostics...';
       setTimeout(() => {
-        result.textContent = '✅ All systems operational. E2E test passed.';
+        result.textContent = '✅ All systems are operational.';
       }, 2000);
     }
 
