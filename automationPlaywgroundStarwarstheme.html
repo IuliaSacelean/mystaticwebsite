@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Star Wars QA Automation Playground</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #000000, #1a1a1a);
+      color: #00ffcc;
+    }
+    header {
+      background-color: #111;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      border-bottom: 2px solid #00ffcc;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 2rem;
+    }
+    .panel {
+      background-color: #222;
+      border: 1px solid #00ffcc;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem;
+      width: 300px;
+      box-shadow: 0 0 12px #00ffcc;
+    }
+    label, input, button, select {
+      display: block;
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+    input, select {
+      padding: 0.5rem;
+      background-color: #111;
+      color: #00ffcc;
+      border: 1px solid #00ffcc;
+    }
+    button {
+      background-color: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+    .droid-status {
+      background-color: #000;
+      border: 1px dashed #00ffcc;
+      padding: 1rem;
+      font-family: monospace;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      background-color: #111;
+      border: 2px solid #00ffcc;
+      padding: 1rem 1.5rem;
+      color: #00ffcc;
+      z-index: 1000;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ffcc;
+      position: relative;
+    }
+    .popup.active {
+      display: block;
+    }
+    .popup .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      color: #00ffcc;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0;
+    }
+    .popup .error {
+      color: #ff4444;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    🚀 Star Wars QA Automation Playground
+  </header>
+
+  <div class="container">
+
+    <div class="panel">
+      <h2>🧪 Droid Control Panel</h2>
+      <label for="droid-name">Droid Name:</label>
+      <input type="text" id="droid-name" placeholder="e.g., R2-D2" />
+
+      <label for="status">Status:</label>
+      <select id="status">
+        <option value="active">Active</option>
+        <option value="standby">Standby</option>
+        <option value="offline">Offline</option>
+      </select>
+
+      <button onclick="submitDroid()">Update Droid</button>
+    </div>
+
+    <div class="panel">
+      <h2>📋 Droid Status Log</h2>
+      <div id="log" class="droid-status">
+        <!-- Log will appear here -->
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>💬 Console Terminal</h2>
+      <button onclick="openPopup('consolePopup')">Launch Command Console</button>
+    </div>
+
+    <div class="panel">
+      <h2>🛰️ E2E Test Console</h2>
+      <button onclick="openPopup('e2ePopup')">Initiate E2E Diagnostic</button>
+    </div>
+
+    <div class="panel">
+      <h2>⚡ Jedi Enhancements</h2>
+    
+      <label for="lightsaber">Activate Lightsaber:</label>
+      <input type="checkbox" id="lightsaber" onchange="updatePreview()" />
+    
+      <label for="forceLevel">Force Sensitivity:</label>
+      <input type="range" id="forceLevel" min="0" max="100" value="50" onchange="updatePreview()" />
+    
+      <label for="starship">Assign Starship:</label>
+      <select id="starship" onchange="updatePreview()">
+        <option value="Millennium Falcon">Millennium Falcon</option>
+        <option value="X-Wing">X-Wing</option>
+        <option value="TIE Fighter">TIE Fighter</option>
+        <option value="Slave I">Slave I</option>
+      </select>
+    
+      <h3>🔍 Droid Preview</h3>
+      <div id="preview" class="droid-status">
+        <p>No data yet...</p>
+      </div>
+    </div>
+    
+
+  </div>
+
+  <div id="consolePopup" class="popup">
+    <button class="close-btn" onclick="closePopup('consolePopup')">✖</button>
+    <h3>Imperial Access Console</h3>
+    <p>Enter access code:</p>
+    <input type="password" id="accessCode" placeholder="******" />
+    <button onclick="verifyAccess()">Submit</button>
+    <p id="consoleResult"></p>
+  </div>
+
+  <div id="e2ePopup" class="popup">
+    <button class="close-btn" onclick="closePopup('e2ePopup')">✖</button>
+    <h3>System Diagnostic Console</h3>
+    <p>Start full E2E system check:</p>
+    <button onclick="runE2ETest()">Run Test</button>
+    <p id="e2eResult"></p>
+  </div>
+
+  <script>
+    function submitDroid() {
+      const name = document.getElementById('droid-name').value;
+      const status = document.getElementById('status').value;
+      const log = document.getElementById('log');
+
+      const entry = `[${new Date().toLocaleTimeString()}] Droid ${name} set to status: ${status}`;
+      const p = document.createElement('p');
+      p.textContent = entry;
+      log.appendChild(p);
+    }
+
+    function openPopup(id) {
+      const popup = document.getElementById(id);
+      popup.style.display = 'block';
+      popup.classList.add('active');
+    }
+
+    function closePopup(id) {
+      const popup = document.getElementById(id);
+      popup.classList.remove('active');
+      popup.style.display = 'none';
+      if (id === 'consolePopup') {
+        document.getElementById('accessCode').value = '';
+        const result = document.getElementById('consoleResult');
+        result.textContent = '';
+        result.classList.remove('error');
+      } else if (id === 'e2ePopup') {
+        document.getElementById('e2eResult').textContent = '';
+      }
+    }
+
+    function verifyAccess() {
+      const input = document.getElementById('accessCode').value;
+      const result = document.getElementById('consoleResult');
+      if (input === 'reb3l') {
+        result.textContent = '✅ Access Granted. Welcome, Rebel Agent.';
+        result.classList.remove('error');
+        setTimeout(() => closePopup('consolePopup'), 2000);
+      } else {
+        result.textContent = '❌ Access Denied. Imperial intrusion detected.';
+        result.classList.add('error');
+      }
+    }
+
+    function runE2ETest() {
+      const result = document.getElementById('e2eResult');
+      result.textContent = '🔄 Running diagnostics...';
+      setTimeout(() => {
+        result.textContent = '✅ All systems operational. E2E test passed.';
+      }, 2000);
+    }
+
+    // Close popups on Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closePopup('consolePopup');
+        closePopup('e2ePopup');
+      }
+    });
+
+    function updatePreview() {
+  const lightsaber = document.getElementById('lightsaber').checked ? '🟢 On' : '🔴 Off';
+  const forceLevel = document.getElementById('forceLevel').value;
+  const starship = document.getElementById('starship').value;
+
+  const preview = document.getElementById('preview');
+  preview.innerHTML = `
+    <p>Lightsaber: ${lightsaber}</p>
+    <p>Force Sensitivity: ${forceLevel}%</p>
+    <p>Assigned Starship: ${starship}</p>
+  `;
+}
+
+  </script>
+</body>
+</html>
