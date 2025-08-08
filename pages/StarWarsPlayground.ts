@@ -1,11 +1,26 @@
 import { Page, Locator } from '@playwright/test';
 
 export class PlaygroundPage {
-  private page: Page;
+  readonly page: Page;
   readonly droidName: Locator;
+  readonly droidStatus: Locator;
+  readonly updateButton: Locator;
+  readonly log: Locator;
 
+  readonly accessCode: Locator;
+  readonly consoleResult: Locator;
+  readonly openConsole: Locator;
+  readonly submitAccess: Locator;
 
-  
+  readonly lightsaber: Locator;
+  readonly forceLevel: Locator;
+  readonly starship: Locator;
+  readonly preview: Locator;
+
+  readonly openE2E: Locator;
+  readonly runE2E: Locator;
+  readonly e2eResult: Locator;
+
   constructor(page: Page) {
     this.page = page;
     this.droidName = page.locator('#droid-name');
