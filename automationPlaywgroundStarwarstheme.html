@@ -154,6 +154,38 @@
       </div>
     </div>
     
+    <section class="jedi-signup">
+      <h2>Join the Jedi Order</h2>
+      <form id="jedi-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+    
+        <label for="rank">Rank:</label>
+        <select id="rank" name="rank" required>
+          <option value="">Select rank</option>
+          <option value="youngling">Youngling</option>
+          <option value="padawan">Padawan</option>
+          <option value="knight">Knight</option>
+          <option value="master">Master</option>
+        </select>
+    
+        <label for="saber">Lightsaber Color:</label>
+        <select id="saber" name="saber">
+          <option value="">Choose color</option>
+          <option value="blue">Blue</option>
+          <option value="green">Green</option>
+          <option value="purple">Purple</option>
+          <option value="red">Red (Sith risk!)</option>
+        </select>
+    
+        <button type="submit">Submit Application</button>
+      </form>
+    
+      <div id="signup-message" style="display: none; margin-top: 1em; color: #4ade80;">
+        ✅ Registration complete! May the Force be with you.
+      </div>
+    </section>
+    
 
   </div>
 
@@ -172,7 +204,10 @@
     <p>Start Checks</p>
     <button onclick="runE2ETest()">Run Test</button>
     <p id="e2eResult"></p>
+  
   </div>
+
+
 
   <script>
     function submitDroid() {
@@ -249,5 +284,20 @@
 }
 
   </script>
+<script>
+  const form = document.getElementById('jedi-form');
+  const message = document.getElementById('signup-message');
+
+  form.addEventListener('submit', event => {
+    event.preventDefault(); // Prevent actual form submission
+
+    // Optional: Do client-side validation or animations
+
+    message.style.display = 'block'; // Reveal message
+    form.reset(); // Clear form
+  });
+</script>
+
+
 </body>
 </html>

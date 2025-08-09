@@ -91,6 +91,41 @@
     font-size: 16px;
     color: #7f8c8d;
   }
+
+  .jedi-signup {
+    background-color: #0f172a;
+    color: #f8fafc;
+    padding: 2em;
+    max-width: 500px;
+    margin: 2em auto;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+  }
+  
+  .jedi-signup h2 {
+    text-align: center;
+    margin-bottom: 1em;
+  }
+  
+  .jedi-signup label,
+  .jedi-signup input,
+  .jedi-signup select,
+  .jedi-signup button {
+    display: block;
+    width: 100%;
+    margin-bottom: 1em;
+  }
+  
+  .jedi-signup button {
+    background-color: #22d3ee;
+    color: #0f172a;
+    border: none;
+    padding: 0.75em;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  
   
   
   
