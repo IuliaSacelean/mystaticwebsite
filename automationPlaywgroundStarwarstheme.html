@@ -153,7 +153,29 @@
         <p>No data yet...</p>
       </div>
     </div>
+    <section>
+    <div id="consolePopup" class="popup">
+      <button class="close-btn" onclick="closePopup('consolePopup')">✖</button>
+      <h3>Imperial Access Console</h3>
+      <p>Enter access code:</p>
+      <input type="password" id="accessCode" placeholder="reb3l" required />
+      <p class="error" id="consoleResult"></p>
+      <p>Access code: <strong>reb3l</strong></p>
+      <p>Note: Unauthorized access will trigger an alert.</p>
+      <p>Enter the code to verify your identity as a Rebel Agent.</p>
+      <button onclick="verifyAccess()">Submit</button>
+      <p id="consoleResult"></p>
+    </div>
+  
+    <div id="e2ePopup" class="popup">
+      <button class="close-btn" onclick="closePopup('e2ePopup')">✖</button>
+      <h3>System Diagnostic Console</h3>
+      <p>Start Checks</p>
+      <button onclick="runE2ETest()">Run Test</button>
+      <p id="e2eResult"></p>
     
+    </div>
+    </section>
     <section class="jedi-signup">
       <h2>Join the Jedi Order</h2>
       <form id="jedi-form">
@@ -188,26 +210,6 @@
     
 
   </div>
-
-  <div id="consolePopup" class="popup">
-    <button class="close-btn" onclick="closePopup('consolePopup')">✖</button>
-    <h3>Imperial Access Console</h3>
-    <p>Enter access code:</p>
-    <input type="password" id="accessCode" placeholder="reb3l" />
-    <button onclick="verifyAccess()">Submit</button>
-    <p id="consoleResult"></p>
-  </div>
-
-  <div id="e2ePopup" class="popup">
-    <button class="close-btn" onclick="closePopup('e2ePopup')">✖</button>
-    <h3>System Diagnostic Console</h3>
-    <p>Start Checks</p>
-    <button onclick="runE2ETest()">Run Test</button>
-    <p id="e2eResult"></p>
-  
-  </div>
-
-
 
   <script>
     function submitDroid() {
