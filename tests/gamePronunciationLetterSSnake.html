@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Snake Pronunciation — Say “ssss” to wake the snake</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { background:#f7f8fa; margin:0; font-family: Inter, Roboto, system-ui, sans-serif; color:#1b1f24; }
+    .container { max-width: 720px; margin: 18px auto; padding: 18px; border: 1px solid #eee; border-radius: 12px; background: #fff; }
+    h2 { margin: 0 0 12px; font-weight: 600; }
+    .controls { display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap: wrap; }
+    button { cursor:pointer; }
+    .btn { background:#2b7a78; color:#fff; border:none; padding:10px 14px; border-radius:8px; }
+    .btn-stop { background:#ed6a5a; color:#fff; border:none; padding:10px 14px; border-radius:8px; }
+    .btn-small { background:#f2f2f2; border:1px solid #ddd; padding:8px 10px; border-radius:8px; }
+    .error { color:#c62828; margin-top:6px; min-height: 1.2em; }
+    .game { display:flex; gap:18px; align-items:center; flex-wrap: wrap; }
+    .snake-area { flex:0 0 160px; height:160px; border-radius:12px; background:linear-gradient(180deg,#e6f7ff,#dff3f1); display:flex; align-items:center; justify-content:center; }
+    .snake { font-size:64px; transform-origin:center; transition: transform 200ms ease-out; }
+    .ui { flex:1; min-width: 240px; }
+    .progress-label { margin-bottom:6px; }
+    .progress { width:100%; height:20px; background:#eee; border-radius:10px; overflow:hidden; margin-bottom:8px; }
+    .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#7ad9a0,#4cc3ff); transition: width 120ms ease; }
+    .tunables { font-size:13px; color:#333; margin-top:6px; }
+    .muted { color:#666; display:block; margin-top:4px; }
+    .success { margin-top:12px; display:flex; gap:10px; align-items:center; opacity:0; transition: opacity 200ms ease; }
+    .success.visible { opacity:1; }
+    .star { font-size:28px; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap: wrap; }
+    .value-chip { background:#f5f7fa; border:1px solid #e5e7eb; padding:4px 8px; border-radius:8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Snake Pronunciation — Say “ssss” to wake the snake</h2>
+
+    <div class="controls">
+      <button id="startBtn" class="btn">Start Microphone</button>
+      <button id="stopBtn" class="btn-stop" style="display:none;">Stop</button>
+      <button id="calibrateBtn" class="btn-small" disabled>Calibrate (quick)</button>
+      <div class="row">
+        <span class="value-chip">Start band: <span id="valStartHz">3000</span> Hz</span>
+        <span class="value-chip">Required: <span id="valDuration">3</span>s</span>
+        <span class="value-chip">Threshold: <span id="valThreshold">25</span></span>
+        <span class="value-chip">EMA α: <span id="valAlpha">0.15</span></span>
+      </div>
+    </div>
+
+    <div id="errorMsg" class="error"></div>
+
+    <div class="game">
+      <div class="snake-area">
+        <div id="snake" class="snake">🐍</div>
+      </div>
+      <div class="ui">
+        <div id="progressLabel" class="progress-label">Hold sibilant sound: 0.00 / 3s</div>
+        <div class="progress">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <div class="tunables">
+          <div>Target high-frequency start: <b id="txtStartHz">3000 Hz</b></div>
+          <div>Required duration: <b id="txtDuration">3s</b></div>
+          <div>Detection sensitivity (approx): <b id="txtThreshold">25</b></div>
+          <small class="muted">Tip: if detection is noisy, increase threshold; if it's hard to trigger, reduce it a bit.</small>
+        </div>
+
+        <div id="successBox" class="success">
+          <div class="star">✨</div>
+          <div style="font-size:18px;">Great! Snake woke up!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tunables (match the original React defaults)
+    let targetHzStart = 3000;     // start of freq band to inspect (Hz)
+    let requiredDuration = 2;     // seconds continuous
+    let energyThreshold = 25;     // detection threshold (0-255)
+    let smoothingAlpha = 0.15;    // EMA smoothing factor
+
+    // DOM elements
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const calibrateBtn = document.getElementById('calibrateBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const snakeEl = document.getElementById('snake');
+    const progressLabel = document.getElementById('progressLabel');
+    const progressFill = document.getElementById('progressFill');
+    const successBox = document.getElementById('successBox');
+
+    // Display value references
+    const valStartHz = document.getElementById('valStartHz');
+    const valDuration = document.getElementById('valDuration');
+    const valThreshold = document.getElementById('valThreshold');
+    const valAlpha = document.getElementById('valAlpha');
+    const txtStartHz = document.getElementById('txtStartHz');
+    const txtDuration = document.getElementById('txtDuration');
+    const txtThreshold = document.getElementById('txtThreshold');
+
+    // Audio/WebAudio refs
+    let running = false;
+    let success = false;
+    let progressSecs = 0;
+
+    let audioCtx = null;
+    let analyser = null;
+    let source = null;
+    let rafId = null;
+
+    // Detection state
+    let emaEnergy = 0;
+    let lastAboveTs = null;
+    let binStart = 0;
+    let dataArray = null;
+
+    function updateTunablesUI() {
+      valStartHz.textContent = String(targetHzStart);
+      valDuration.textContent = String(requiredDuration);
+      valThreshold.textContent = String(energyThreshold);
+      valAlpha.textContent = String(smoothingAlpha);
+
+      txtStartHz.textContent = `${targetHzStart} Hz`;
+      txtDuration.textContent = `${requiredDuration}s`;
+      txtThreshold.textContent = `${energyThreshold}`;
+    }
+
+    function setError(text) {
+      errorMsg.textContent = text || '';
+    }
+
+    function updateUI() {
+      // Progress and bar
+      progressLabel.textContent = `Hold sibilant sound: ${progressSecs.toFixed(2)} / ${requiredDuration}s`;
+      const pct = Math.max(0, Math.min(1, progressSecs / requiredDuration)) * 100;
+      progressFill.style.width = `${pct}%`;
+
+      // Snake movement
+      if (success) {
+        snakeEl.style.transform = 'translateY(-10px) scale(1.06)';
+      } else {
+        const y = (1 - Math.min(progressSecs / requiredDuration, 1)) * 40;
+        snakeEl.style.transform = `translateY(${y}px)`;
+      }
+
+      // Success box
+      successBox.classList.toggle('visible', success);
+    }
+
+    async function startAudio() {
+      setError('');
+      success = false;
+      progressSecs = 0;
+      updateUI();
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+
+        source = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 2048; // frequencyBinCount = 1024
+        analyser.smoothingTimeConstant = 0.8;
+
+        source.connect(analyser);
+
+        const bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+
+        // Compute bin index for targetHzStart
+        const resolution = audioCtx.sampleRate / analyser.fftSize; // Hz per bin
+        binStart = Math.max(0, Math.floor(targetHzStart / resolution));
+
+        running = true;
+        emaEnergy = 0;
+        lastAboveTs = null;
+
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-block';
+        calibrateBtn.disabled = false;
+
+        tick();
+      } catch (err) {
+        console.error('Microphone start failed:', err);
+        setError('Microphone access denied or unavailable.');
+        running = false;
+        startBtn.style.display = 'inline-block';
+        stopBtn.style.display = 'none';
+        calibrateBtn.disabled = true;
+      }
+    }
+
+    function stopAudio() {
+      running = false;
+
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      try {
+        if (source && source.mediaStream) {
+          source.mediaStream.getTracks().forEach(t => t.stop());
+        }
+      } catch (_) {}
+
+      if (audioCtx) {
+        try { audioCtx.close(); } catch (_) {}
+      }
+
+      audioCtx = null;
+      analyser = null;
+      source = null;
+      dataArray = null;
+      binStart = 0;
+      emaEnergy = 0;
+      lastAboveTs = null;
+
+      startBtn.style.display = 'inline-block';
+      stopBtn.style.display = 'none';
+      calibrateBtn.disabled = true;
+
+      success = false;
+      progressSecs = 0;
+      updateUI();
+    }
+
+    function tick() {
+      if (!running || !analyser || !dataArray) return;
+
+      analyser.getByteFrequencyData(dataArray); // fills 0..255
+
+      // Average energy in high band (start -> end)
+      let sum = 0, count = 0;
+      for (let i = binStart; i < dataArray.length; i++) {
+        sum += dataArray[i];
+        count++;
+      }
+      const avgEnergy = count > 0 ? sum / count : 0;
+
+      // EMA smoothing
+      emaEnergy = smoothingAlpha * avgEnergy + (1 - smoothingAlpha) * emaEnergy;
+      const smoothed = emaEnergy;
+
+      const now = performance.now();
+
+      if (smoothed >= energyThreshold) {
+        if (!lastAboveTs) lastAboveTs = now;
+        const elapsed = (now - lastAboveTs) / 1000;
+        progressSecs = Math.min(elapsed, requiredDuration);
+        if (elapsed >= requiredDuration) {
+          success = true;
+          progressSecs = requiredDuration;
+          // Small celebration pause, then reset progress (but keep running)
+          lastAboveTs = null;
+          setTimeout(() => {
+            success = false;
+            progressSecs = 0;
+          }, 1200);
+        }
+      } else {
+        lastAboveTs = null;
+        progressSecs = 0;
+        success = false;
+      }
+
+      updateUI();
+      rafId = requestAnimationFrame(tick);
+    }
+
+    async function calibrateThreshold() {
+      if (!analyser || !dataArray) {
+        setError('Start the mic first to calibrate.');
+        return;
+      }
+      setError('');
+      const samples = 6;
+      let total = 0;
+      for (let s = 0; s < samples; s++) {
+        analyser.getByteFrequencyData(dataArray);
+        let sum = 0, count = 0;
+        for (let i = binStart; i < dataArray.length; i++) { sum += dataArray[i]; count++; }
+        total += (count ? sum / count : 0);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      const ambient = total / samples;
+      const newThreshold = Math.max(12, Math.round(ambient * 1.7));
+      energyThreshold = newThreshold;               // apply immediately in vanilla JS
+      updateTunablesUI();
+      alert(`Calibration complete.\nSuggested threshold ≈ ${newThreshold}.`);
+    }
+
+    // Wire up events
+    startBtn.addEventListener('click', startAudio);
+    stopBtn.addEventListener('click', stopAudio);
+    calibrateBtn.addEventListener('click', calibrateThreshold);
+    window.addEventListener('beforeunload', stopAudio);
+
+    // Initial UI render
+    updateTunablesUI();
+    updateUI();
+  </script>
+</body>
+</html>

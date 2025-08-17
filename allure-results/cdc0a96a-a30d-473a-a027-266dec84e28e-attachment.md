@@ -1,0 +1,51 @@
+# Page snapshot
+
+```yaml
+- banner: 🚀 Star Wars QA Automation Playground
+- heading "🧪 Droid Control Panel" [level=2]
+- text: "Droid Name:"
+- textbox "Droid Name:"
+- text: "Status:"
+- combobox "Status:":
+  - option "Active" [selected]
+  - option "Standby"
+  - option "Offline"
+- button "Update Droid"
+- heading "📋 Droid Status Log" [level=2]
+- heading "💬 Console Terminal" [level=2]
+- button "Launch Command Console"
+- heading "🛰️ Initiate Astromech Sync" [level=2]
+- button "Ensures droid systems are synced and operational"
+- heading "⚡ Jedi Enhancements" [level=2]
+- text: "Activate Lightsaber:"
+- checkbox "Activate Lightsaber:"
+- text: "Force Sensitivity:"
+- slider "Force Sensitivity:": "50"
+- text: "Assign Starship:"
+- combobox "Assign Starship:":
+  - option "Millennium Falcon" [selected]
+  - option "X-Wing"
+  - option "TIE Fighter"
+  - option "Slave I"
+- heading "🔍 Droid Preview" [level=3]
+- paragraph: No data yet...
+- heading "Join the Jedi Order" [level=2]
+- text: "Name:"
+- textbox "Name:"
+- text: "Rank:"
+- combobox "Rank:":
+  - option "Select rank" [selected]
+  - option "Youngling"
+  - option "Padawan"
+  - option "Knight"
+  - option "Master"
+- text: "Lightsaber Color:"
+- combobox "Lightsaber Color:":
+  - option "Choose color" [selected]
+  - option "Blue"
+  - option "Green"
+  - option "Purple"
+  - option "Red (Sith risk!)"
+- button "Submit Application"
+- text: ✅ Registration complete! May the Force be with you.
+```

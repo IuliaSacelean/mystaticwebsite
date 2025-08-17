@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Growl Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #111;
+      color: #fff;
+    }
+    canvas {
+      border: 1px solid #fff;
+      margin: 10px;
+      background: #222;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    .tabs button {
+      background: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Growl Game</h1>
+  <div class="tabs">
+    <button onclick="setTab('car')" id="tab-car">Car</button>
+    <button onclick="setTab('rocket')" id="tab-rocket">Rocket</button>
+    <button onclick="setTab('dragon')" id="tab-dragon">Dragon</button>
+  </div>
+  <canvas id="canvas" width="600" height="400"></canvas>
+  <div>
+    <button onclick="enableMic()">Enable Mic</button>
+    <button onclick="stopMic()">Stop Mic</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let currentTab = 'car';
+    let audioContext, analyser, micStream;
+    let growlLevel = 0;
+
+    let carX = 0;
+    let rocketY = 350;
+
+    const dragonImg = new Image();
+    dragonImg.src = "https://static.vecteezy.com/system/resources/previews/004/719/315/original/cute-cartoon-dragon-baby-dragon-or-dinosaur-cute-character-fairytale-monster-illustration-print-vector.jpg";
+
+    const fireImg = new Image();
+    fireImg.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Fire_icon.svg/1024px-Fire_icon.svg.png";
+
+    function setTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`tab-${tab}`).classList.add('active');
+    }
+
+    function enableMic() {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+        micStream = stream;
+        animate();
+      });
+    }
+
+    function stopMic() {
+      if (micStream) {
+        micStream.getTracks().forEach(track => track.stop());
+        micStream = null;
+      }
+    }
+
+    function detectGrowl() {
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(data);
+      const lowFreq = data.slice(0, 50);
+      const avg = lowFreq.reduce((a, b) => a + b, 0) / lowFreq.length;
+      growlLevel = avg > 30 ? avg : 0;
+    }
+
+    function drawCar() {
+      ctx.fillStyle = '#222';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      carX += growlLevel / 10;
+      if (carX > canvas.width + 100) carX = -100;
+
+      ctx.fillStyle = '#00aaff';
+      ctx.fillRect(carX, 300, 100, 40);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(carX + 10, 305, 30, 20);
+
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(carX + 20, 340, 10, 0, Math.PI * 2);
+      ctx.arc(carX + 80, 340, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.fillText('Car Speed: ' + growlLevel.toFixed(0), 10, 20);
+    }
+
+    function drawRocket() {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      rocketY -= growlLevel / 5;
+      if (rocketY < -100) rocketY = 350;
+
+      ctx.fillStyle = '#ff4444';
+      ctx.beginPath();
+      ctx.moveTo(300, rocketY);
+      ctx.lineTo(290, rocketY + 50);
+      ctx.lineTo(310, rocketY + 50);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#888';
+      ctx.fillRect(285, rocketY + 50, 10, 20);
+      ctx.fillRect(305, rocketY + 50, 10, 20);
+
+      ctx.fillStyle = 'orange';
+      ctx.beginPath();
+      ctx.moveTo(295, rocketY + 70);
+      ctx.lineTo(300, rocketY + 70 + growlLevel / 2);
+      ctx.lineTo(305, rocketY + 70);
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.fillText('Rocket Power: ' + growlLevel.toFixed(0), 10, 20);
+    }
+
+    function drawDragon() {
+      ctx.fillStyle = '#111';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const size = 100 + growlLevel;
+      const x = canvas.width / 2 - size / 2;
+      const y = canvas.height / 2 - size / 2;
+
+      if (dragonImg.complete) {
+        ctx.drawImage(dragonImg, x, y, size, size);
+      } else {
+        dragonImg.onload = () => ctx.drawImage(dragonImg, x, y, size, size);
+      }
+
+      if (growlLevel > 40 && fireImg.complete) {
+        const fireSize = growlLevel;
+        ctx.drawImage(fireImg, x + size - 20, y + size / 2 - fireSize / 2, fireSize, fireSize);
+      }
+
+      ctx.fillStyle = '#fff';
+      ctx.fillText('Dragon Rage: ' + growlLevel.toFixed(0), 10, 20);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (analyser) detectGrowl();
+      else growlLevel = 0;
+
+      switch (currentTab) {
+        case 'car': drawCar(); break;
+        case 'rocket': drawRocket(); break;
+        case 'dragon': drawDragon(); break;
+      }
+    }
+
+    setTab('car');
+  </script>
+</body>
+</html>

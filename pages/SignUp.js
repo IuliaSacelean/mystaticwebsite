@@ -1,18 +1,18 @@
-// pages/SignupPage.ts
+import { expect } from '@playwright/test';  
+import config from '../playwright.config.js';
 export class SignupPage {
    
     constructor(page) {
         this.page = page;
     }
 
-
-    
-    async goto() {
-      await this.page.goto('/signup');
+    async navigate() {
+        const baseURL = config.use.baseURL || 'https://yourdailyqadose.com/automationPlaywgroundStarwarstheme.html';
+      await this.page.goto(baseURL);
     }
-  
-    async fillForm({ name, rank, saber }: { name: string; rank: string; saber: string }) {
-      await this.page.getByLabel('Name').fill(name);
+
+    async fillForm({ name, rank, saber }) {
+      await this.page.getByLabel('Name').nth(1).fill(name, { delay: 100 });
       await this.page.getByLabel('Rank').selectOption(rank);
       await this.page.getByLabel('Lightsaber Color').selectOption(saber);
     }
@@ -21,8 +21,9 @@ export class SignupPage {
       await this.page.getByRole('button', { name: /submit/i }).click();
     }
   
-    async expectSuccessMessage(text: string) {
-      await expect(this.page.getByRole('alert')).toContainText(text);
+    async expectSuccessMessage() {
+    const text = '✅ Registration complete! May the Force be with you.';
+      await expect(this.page.getByText(text)).toBeVisible();
     }
   }
   

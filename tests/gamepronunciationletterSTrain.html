@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Train Pronunciation — Say “ssss” to power the train</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --primary:#2b7a78;
+      --danger:#ed6a5a;
+      --bg:#f7f8fa;
+      --card:#fff;
+      --muted:#666;
+    }
+    body { background:var(--bg); margin:0; font-family: Inter, Roboto, system-ui, sans-serif; color:#1b1f24; }
+    .container { max-width: 800px; margin: 18px auto; padding: 18px; border: 1px solid #eee; border-radius: 12px; background: var(--card); }
+    h2 { margin: 0 0 12px; font-weight: 600; }
+    .controls { display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap: wrap; }
+    button { cursor:pointer; }
+    .btn { background:var(--primary); color:#fff; border:none; padding:10px 14px; border-radius:8px; }
+    .btn-stop { background:var(--danger); color:#fff; border:none; padding:10px 14px; border-radius:8px; }
+    .btn-small { background:#f2f2f2; border:1px solid #ddd; padding:8px 10px; border-radius:8px; }
+    .error { color:#c62828; margin-top:6px; min-height:1.2em; }
+    .game { display:flex; gap:18px; align-items:center; flex-wrap: wrap; }
+    .ui { flex:1; min-width:260px; }
+    .progress-label { margin-bottom:6px; }
+    .progress { width:100%; height:20px; background:#eee; border-radius:10px; overflow:hidden; margin-bottom:8px; }
+    .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#7ad9a0,#4cc3ff); transition: width 120ms ease; }
+    .tunables { font-size:13px; color:#333; margin-top:6px; }
+    .muted { color:var(--muted); display:block; margin-top:4px; }
+
+    /* Train scene */
+    .scene { flex: 0 0 480px; height: 200px; border-radius: 12px;
+             background: linear-gradient(180deg,#e6f7ff 0%, #dff3f1 60%, #cfd8dc 60%, #cfd8dc 100%);
+             display:flex; align-items:flex-end; justify-content:center; position:relative; overflow:hidden; }
+    .track { position:absolute; left:12px; right:12px; bottom:30px; height:6px; background:#6d4c41; box-shadow: 0 2px 0 rgba(0,0,0,0.1) inset; }
+    .sleepers { position:absolute; left:12px; right:12px; bottom:24px; height:18px; display:flex; gap:14px; }
+    .sleeper { flex:0 0 24px; height:100%; background:#8d6e63; border-radius:2px; opacity:.8; }
+    .train-wrap { position:absolute; left:12px; right:12px; bottom:40px; height:70px; }
+    .train { position:absolute; bottom:0; left:0; font-size:48px; transform-origin:center; transition: transform 180ms ease; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.15)); }
+    .train.blast { transform: translateY(-2px) scale(1.04); }
+    .steam { position:absolute; bottom:42px; left:24px; font-size:24px; opacity:0; pointer-events:none; }
+    .hissing .steam { opacity:1; animation: puff 1.1s linear infinite; }
+    @keyframes puff {
+      0% { transform: translate(0, 0) scale(0.8); opacity:.9; }
+      60% { transform: translate(12px, -22px) scale(1.1); opacity:.6; }
+      100% { transform: translate(24px, -44px) scale(1.3); opacity:0; }
+    }
+    .speedlines { position:absolute; bottom:64px; left:0; right:0; height:24px; opacity:0; pointer-events:none; }
+    .speedlines::before,
+    .speedlines::after {
+      content:""; position:absolute; left:-50%; right:-50%; top:8px; height:2px; background: repeating-linear-gradient(90deg, rgba(76,195,255,.8) 0 24px, transparent 24px 44px);
+      animation: move 700ms linear infinite;
+    }
+    .speedlines::after { top:14px; opacity:.7; animation-duration: 520ms; }
+    .fast .speedlines { opacity:1; }
+    @keyframes move {
+      to { transform: translateX(50%); }
+    }
+
+    .value-row { display:flex; gap:12px; align-items:center; flex-wrap: wrap; }
+    .chip { background:#f5f7fa; border:1px solid #e5e7eb; padding:4px 8px; border-radius:8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .success { margin-top:12px; display:flex; gap:10px; align-items:center; opacity:0; transition: opacity 200ms ease; }
+    .success.visible { opacity:1; }
+    .star { font-size:28px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Train Pronunciation — Say “ssss” to power the engine</h2>
+
+    <div class="controls">
+      <button id="startBtn" class="btn">Start Microphone</button>
+      <button id="stopBtn" class="btn-stop" style="display:none;">Stop</button>
+      <button id="calibrateBtn" class="btn-small" disabled>Calibrate (quick)</button>
+      <div class="value-row">
+        <span class="chip">Start band: <span id="valStartHz">3000</span> Hz</span>
+        <span class="chip">Required: <span id="valDuration">3</span>s</span>
+        <span class="chip">Threshold: <span id="valThreshold">25</span></span>
+        <span class="chip">EMA α: <span id="valAlpha">0.15</span></span>
+      </div>
+    </div>
+
+    <div id="errorMsg" class="error"></div>
+
+    <div class="game">
+      <div class="scene" id="scene">
+        <div class="sleepers" aria-hidden="true">
+          <!-- a few sleepers for visual rails -->
+          <div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div>
+          <div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div>
+          <div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div>
+          <div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div>
+        </div>
+        <div class="track" aria-hidden="true"></div>
+        <div class="train-wrap" id="track">
+          <div class="train" id="train" role="img" aria-label="Train">🚂</div>
+          <div class="steam" id="steam" aria-hidden="true">💨</div>
+          <div class="speedlines" id="speedlines" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="ui">
+        <div id="progressLabel" class="progress-label">Hold sibilant sound: 0.00 / 3s</div>
+        <div class="progress">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <div class="tunables">
+          <div>Target high-frequency start: <b id="txtStartHz">3000 Hz</b></div>
+          <div>Required duration: <b id="txtDuration">3s</b></div>
+          <div>Detection sensitivity (approx): <b id="txtThreshold">25</b></div>
+          <small class="muted">Tip: if detection is noisy, increase threshold; if it's hard to trigger, reduce it a bit.</small>
+        </div>
+
+        <div id="successBox" class="success">
+          <div class="star">✨</div>
+          <div style="font-size:18px;">Choo-choo! Full steam ahead!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tunables (same defaults as the snake game)
+    let targetHzStart = 3000;     // start of frequency band to inspect (Hz)
+    let requiredDuration = 2;     // seconds continuous
+    let energyThreshold = 25;     // detection threshold (0-255)
+    let smoothingAlpha = 0.15;    // EMA smoothing factor
+
+    // DOM elements
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const calibrateBtn = document.getElementById('calibrateBtn');
+    const errorMsg = document.getElementById('errorMsg');
+
+    const progressLabel = document.getElementById('progressLabel');
+    const progressFill = document.getElementById('progressFill');
+    const successBox = document.getElementById('successBox');
+
+    const valStartHz = document.getElementById('valStartHz');
+    const valDuration = document.getElementById('valDuration');
+    const valThreshold = document.getElementById('valThreshold');
+    const valAlpha = document.getElementById('valAlpha');
+    const txtStartHz = document.getElementById('txtStartHz');
+    const txtDuration = document.getElementById('txtDuration');
+    const txtThreshold = document.getElementById('txtThreshold');
+
+    // Train visuals
+    const trackEl = document.getElementById('track');
+    const trainEl = document.getElementById('train');
+    const steamEl = document.getElementById('steam');
+    const speedlinesEl = document.getElementById('speedlines');
+    const sceneEl = document.getElementById('scene');
+
+    // Audio/WebAudio state
+    let running = false;
+    let success = false;
+    let progressSecs = 0;
+    let hissActive = false;
+
+    let audioCtx = null;
+    let analyser = null;
+    let source = null;
+    let rafId = null;
+
+    // Detection internals
+    let emaEnergy = 0;
+    let lastAboveTs = null;
+    let binStart = 0;
+    let dataArray = null;
+
+    function updateTunablesUI() {
+      valStartHz.textContent = String(targetHzStart);
+      valDuration.textContent = String(requiredDuration);
+      valThreshold.textContent = String(energyThreshold);
+      valAlpha.textContent = String(smoothingAlpha);
+
+      txtStartHz.textContent = `${targetHzStart} Hz`;
+      txtDuration.textContent = `${requiredDuration}s`;
+      txtThreshold.textContent = `${energyThreshold}`;
+    }
+
+    function setError(text) {
+      errorMsg.textContent = text || '';
+    }
+
+    function setTrainPositionByProgress() {
+      const trackWidth = trackEl.clientWidth;
+      const trainWidth = trainEl.clientWidth;
+      const maxX = Math.max(0, trackWidth - trainWidth);
+      const pct = Math.max(0, Math.min(1, progressSecs / requiredDuration));
+      const x = pct * maxX;
+      trainEl.style.left = `${x}px`;
+    }
+
+    function updateUI() {
+      // Progress and bar
+      progressLabel.textContent = `Hold sibilant sound: ${progressSecs.toFixed(2)} / ${requiredDuration}s`;
+      const pct = Math.max(0, Math.min(1, progressSecs / requiredDuration)) * 100;
+      progressFill.style.width = `${pct}%`;
+
+      // Train movement and effects
+      setTrainPositionByProgress();
+      trainEl.classList.toggle('blast', success || hissActive);
+      sceneEl.classList.toggle('hissing', hissActive);
+      sceneEl.classList.toggle('fast', success);
+
+      // Steam visibility handled via CSS when 'hissing' is on
+      successBox.classList.toggle('visible', success);
+    }
+
+    async function startAudio() {
+      setError('');
+      success = false;
+      progressSecs = 0;
+      hissActive = false;
+      updateUI();
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+
+        source = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 2048; // frequencyBinCount = 1024
+        analyser.smoothingTimeConstant = 0.8;
+
+        source.connect(analyser);
+
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        // Compute bin index for targetHzStart
+        const resolution = audioCtx.sampleRate / analyser.fftSize; // Hz per bin
+        binStart = Math.max(0, Math.floor(targetHzStart / resolution));
+
+        running = true;
+        emaEnergy = 0;
+        lastAboveTs = null;
+
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-block';
+        calibrateBtn.disabled = false;
+
+        tick();
+      } catch (err) {
+        console.error('Microphone start failed:', err);
+        setError('Microphone access denied or unavailable.');
+        running = false;
+        startBtn.style.display = 'inline-block';
+        stopBtn.style.display = 'none';
+        calibrateBtn.disabled = true;
+      }
+    }
+
+    function stopAudio() {
+      running = false;
+
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      try {
+        if (source && source.mediaStream) {
+          source.mediaStream.getTracks().forEach(t => t.stop());
+        }
+      } catch (_) {}
+
+      if (audioCtx) {
+        try { audioCtx.close(); } catch (_) {}
+      }
+
+      audioCtx = null;
+      analyser = null;
+      source = null;
+      dataArray = null;
+      binStart = 0;
+      emaEnergy = 0;
+      lastAboveTs = null;
+
+      startBtn.style.display = 'inline-block';
+      stopBtn.style.display = 'none';
+      calibrateBtn.disabled = true;
+
+      success = false;
+      progressSecs = 0;
+      hissActive = false;
+      updateUI();
+    }
+
+    function tick() {
+      if (!running || !analyser || !dataArray) return;
+
+      analyser.getByteFrequencyData(dataArray); // fills 0..255
+
+      // Average energy in high band (from binStart -> end)
+      let sum = 0, count = 0;
+      for (let i = binStart; i < dataArray.length; i++) {
+        sum += dataArray[i];
+        count++;
+      }
+      const avgEnergy = count > 0 ? sum / count : 0;
+
+      // EMA smoothing
+      emaEnergy = smoothingAlpha * avgEnergy + (1 - smoothingAlpha) * emaEnergy;
+      const smoothed = emaEnergy;
+
+      const now = performance.now();
+      hissActive = smoothed >= energyThreshold;
+
+      if (hissActive) {
+        if (!lastAboveTs) lastAboveTs = now;
+        const elapsed = (now - lastAboveTs) / 1000;
+        progressSecs = Math.min(elapsed, requiredDuration);
+
+        if (elapsed >= requiredDuration) {
+          success = true;
+          progressSecs = requiredDuration;
+
+          // Celebrate briefly, then reset but keep listening
+          lastAboveTs = null;
+          setTimeout(() => {
+            success = false;
+            progressSecs = 0;
+          }, 1200);
+        }
+      } else {
+        lastAboveTs = null;
+        progressSecs = 0;
+        success = false;
+      }
+
+      updateUI();
+      rafId = requestAnimationFrame(tick);
+    }
+
+    async function calibrateThreshold() {
+      if (!analyser || !dataArray) {
+        setError('Start the mic first to calibrate.');
+        return;
+      }
+      setError('');
+
+      // Sample ~240ms of frames and average ambient high-band energy
+      const samples = 6;
+      let total = 0;
+      for (let s = 0; s < samples; s++) {
+        analyser.getByteFrequencyData(dataArray);
+        let sum = 0, count = 0;
+        for (let i = binStart; i < dataArray.length; i++) { sum += dataArray[i]; count++; }
+        total += (count ? sum / count : 0);
+        await new Promise(r => setTimeout(r, 40));
+      }
+
+      const ambient = total / samples;
+      const newThreshold = Math.max(12, Math.round(ambient * 1.7));
+      energyThreshold = newThreshold; // apply immediately
+      updateTunablesUI();
+      alert(`Calibration complete.\nSuggested threshold ≈ ${newThreshold}.`);
+    }
+
+    // Events
+    startBtn.addEventListener('click', startAudio);
+    stopBtn.addEventListener('click', stopAudio);
+    calibrateBtn.addEventListener('click', calibrateThreshold);
+    window.addEventListener('beforeunload', stopAudio);
+    window.addEventListener('resize', () => requestAnimationFrame(setTrainPositionByProgress));
+
+    // Initial UI render
+    updateTunablesUI();
+    updateUI();
+  </script>
+</body>
+</html>

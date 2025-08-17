@@ -9,5 +9,6 @@ test('should grant access with correct code', async ({ page }) => {
   await page.click('text=Submit');
 
   const result = page.locator('#consoleResult');
-  await expect(result).toHaveText(/Access Granted/);
+  await expect(result).toHaveText('Access Granted', { timeout: 3000 });
+//  await expect(page).toHaveURL(/.*console/);
 });
