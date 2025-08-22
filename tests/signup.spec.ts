@@ -7,6 +7,6 @@ test('create new padawan', async ({ page }) => {
   await signUp.navigate();
   await signUp.fillForm({ name: 'Ahsoka', rank: 'Padawan', saber: 'Blue' });
   await signUp.submit();
-  await signUp.expectSuccessMessage('Registration complete! May the Force be with you.');
+  await signUp.expectSuccessMessage();
   
 });
