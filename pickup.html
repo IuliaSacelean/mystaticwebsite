@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PickupApp — Demo</title>
+<style>
+  :root{
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --success:#10b981;
+    --danger:#ef4444;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  body{margin:0;background:var(--bg);color:#0f172a}
+  .app{max-width:900px;margin:28px auto;padding:20px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  h1{font-size:20px;margin:0}
+  .mode-toggle{display:flex;gap:8px}
+  button{font-size:15px;padding:10px 14px;border-radius:10px;border:0;cursor:pointer}
+  .btn-primary{background:var(--accent);color:white;box-shadow:0 6px 18px rgba(37,99,235,0.12)}
+  .btn-ghost{background:transparent;border:1px solid rgba(15,23,42,0.06)}
+  .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 6px 18px rgba(12,18,30,0.04)}
+  .parent-section{display:grid;gap:12px;align-items:center}
+  .big-btn{font-size:20px;padding:18px;border-radius:12px;background:linear-gradient(180deg,var(--accent),#1e40af);color:white;border:0;box-shadow:0 10px 30px rgba(37,99,235,0.12)}
+  label{font-size:13px;color:var(--muted)}
+  select,input[type=text]{padding:10px;border-radius:8px;border:1px solid #e6eef8;font-size:14px}
+  .queue{display:flex;flex-direction:column;gap:10px}
+  .row{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:10px;border:1px solid #eef3ff;background:linear-gradient(180deg,#fff,#fcfeff)}
+  .meta{font-size:13px;color:var(--muted)}
+  .tag{font-size:13px;padding:6px 8px;border-radius:999px;background:#eef2ff;color:#1e3a8a}
+  .history{margin-top:12px;font-size:14px;color:var(--muted)}
+  .small{font-size:13px;color:var(--muted)}
+  .placeholder{padding:30px;text-align:center;color:var(--muted)}
+  footer{margin-top:18px;font-size:13px;color:var(--muted);text-align:center}
+  .flex{display:flex;gap:8px;align-items:center}
+  @media(max-width:640px){
+    .app{padding:12px}
+    .big-btn{font-size:18px;padding:14px}
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>PickupApp — Demo</h1>
+      <div class="mode-toggle">
+        <button id="viewParent" class="btn-primary">Parent view</button>
+        <button id="viewTeacher" class="btn-ghost">Teacher view</button>
+      </div>
+    </header>
+
+    <main id="main" class="card">
+      <!-- content injected by JS -->
+    </main>
+
+    <footer>
+      Demo local (localStorage). For multi-device give it a small backend API (see notes).
+    </footer>
+  </div>
+
+<script>
+/*
+  PickupApp single-file demo
+  - Works locally using localStorage
+  - If API_BASE is set and reachable, will sync with server via REST
+  Usage:
+    - Toggle views with buttons
+    - Parent: pick child name & "who picks up", tap "I'm here".
+    - Teacher: see arrivals, press "Picked up".
+*/
+
+/* CONFIG */
+const API_BASE = null; // set to e.g. "https://your-server.example/api" to enable server mode
+const POLL_INTERVAL = 3000; // ms for teacher to poll when no websocket
+
+/* Storage keys */
+const STORAGE_KEY = 'pickupapp_events_v1';
+
+/* utilities */
+const $ = (s) => document.querySelector(s);
+const timeNow = () => new Date().toISOString();
+const humanTime = (iso) => new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+/* minimal demo dataset */
+const demoChildren = [
+  {id: 'c1', name: 'Andrei Pop'},
+  {id: 'c2', name: 'Maria Ionescu'},
+  {id: 'c3', name: 'Ioan Georgescu'}
+];
+
+/* persistence with optional server */
+async function getEvents(){
+  if(API_BASE){
+    try {
+      const res = await fetch(API_BASE + '/events');
+      if(!res.ok) throw new Error('server');
+      return await res.json();
+    } catch(e){
+      // fallback to local
+    }
+  }
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+
+async function saveEvent(evt){
+  if(API_BASE){
+    try {
+      const res = await fetch(API_BASE + '/events', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(evt)
+      });
+      if(res.ok) return await res.json();
+    } catch(e){}
+  }
+  const arr = await getEvents();
+  arr.push(evt);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  return evt;
+}
+
+async function updateEvent(id, patch){
+  if(API_BASE){
+    try {
+      const res = await fetch(API_BASE + '/events/' + id, {
+        method: 'PATCH',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(patch)
+      });
+      if(res.ok) return await res.json();
+    } catch(e){}
+  }
+  const arr = await getEvents();
+  const idx = arr.findIndex(a=>a.id===id);
+  if(idx>=0){
+    arr[idx] = {...arr[idx], ...patch};
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    return arr[idx];
+  }
+  return null;
+}
+
+/* UI rendering */
+const main = $('#main');
+
+function showParent(){
+  main.innerHTML = `
+    <div class="parent-section">
+      <div>
+        <label class="small">Alege copil</label><br/>
+        <select id="childSelect">${demoChildren.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label class="small">Cine ridică?</label><br/>
+        <select id="whoSelect">
+          <option>Eu</option>
+          <option>Tată</option>
+          <option>Mamă</option>
+          <option>Bunică</option>
+          <option>Altă persoană</option>
+        </select>
+      </div>
+      <div>
+        <label class="small">Notă (opțional)</label><br/>
+        <input type="text" id="noteInput" placeholder="ex: vine cu bunica">
+      </div>
+      <div>
+        <button id="checkInBtn" class="big-btn">Sunt aici</button>
+      </div>
+      <div id="confirm" class="placeholder small" style="display:none"></div>
+    </div>
+  `;
+
+  $('#checkInBtn').addEventListener('click', async () => {
+    const childId = $('#childSelect').value;
+    const who = $('#whoSelect').value;
+    const note = $('#noteInput').value.trim();
+    const child = demoChildren.find(c=>c.id===childId);
+    const evt = {
+      id: 'e_' + Math.random().toString(36).slice(2,9),
+      childId,
+      childName: child ? child.name : 'N/A',
+      who,
+      note,
+      status: 'arrived',
+      ts: timeNow()
+    };
+    await saveEvent(evt);
+    $('#confirm').style.display = 'block';
+    $('#confirm').innerHTML = `✅ Ai raportat sosirea pentru <strong>${evt.childName}</strong> la ${humanTime(evt.ts)}. Așteaptă lângă poartă.`;
+    // clear optional note
+    $('#noteInput').value = '';
+  });
+}
+
+let teacherPollTimer = null;
+let lastRender = null;
+
+async function renderTeacher(){
+  const events = (await getEvents()).filter(e=> e.status !== 'cancelled');
+  // active = arrived & not picked
+  const active = events.filter(e=> e.status === 'arrived').sort((a,b)=> new Date(a.ts) - new Date(b.ts));
+  const picked = events.filter(e=> e.status === 'picked').sort((a,b)=> new Date(b.ts) - new Date(a.ts));
+
+  // quick diff: avoid re-rendering if identical
+  const curHash = JSON.stringify({activeIds: active.map(a=>a.id), pickedIds: picked.map(p=>p.id)});
+  if(curHash === lastRender) return;
+  lastRender = curHash;
+
+  main.innerHTML = `
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <strong>Lista sosiri</strong>
+          <div class="small">Actualizat la ${new Date().toLocaleTimeString()}</div>
+        </div>
+        <div class="flex">
+          <button id="refreshBtn" class="btn-ghost">Refresh</button>
+          <button id="clearAll" class="btn-ghost" title="Sterge toate evenimentele demo">Clear demo</button>
+        </div>
+      </div>
+
+      <div class="queue" id="queueList">
+        ${active.length === 0 ? `<div class="placeholder">Niciun părinte încă.</div>` :
+          active.map(a => `
+            <div class="row" data-id="${a.id}">
+              <div>
+                <div><strong>${a.childName}</strong> <span class="meta">— ${a.who}</span></div>
+                <div class="meta">${humanTime(a.ts)} ${a.note ? '· ' + a.note : ''}</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <button class="btn-primary" data-action="picked" data-id="${a.id}">Picked up</button>
+                <button class="btn-ghost" data-action="cancel" data-id="${a.id}">Cancel</button>
+              </div>
+            </div>
+          `).join('')
+        }
+      </div>
+
+      <div class="history">
+        <strong>Istoric (azi)</strong>
+        <div id="pickedList">
+          ${picked.length === 0 ? `<div class="small">Nicio ridicare finalizată.</div>` :
+            picked.map(p => `<div class="small">${humanTime(p.ts)} — ${p.childName} — ${p.who}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.querySelectorAll('[data-action="picked"]').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      const id = btn.dataset.id;
+      await updateEvent(id, { status: 'picked', ts: timeNow() });
+      await renderTeacher();
+    });
+  });
+  document.querySelectorAll('[data-action="cancel"]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.id;
+      await updateEvent(id, { status: 'cancelled', ts: timeNow() });
+      await renderTeacher();
+    });
+  });
+
+  $('#refreshBtn').addEventListener('click', renderTeacher);
+  $('#clearAll').addEventListener('click', ()=>{
+    if(confirm('Ștergi toate evenimentele demo din localStorage?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      renderTeacher();
+    }
+  });
+}
+
+/* initial view & toggles */
+$('#viewParent').addEventListener('click', () => {
+  showParent();
+  $('#viewParent').classList.add('btn-primary'); $('#viewParent').classList.remove('btn-ghost');
+  $('#viewTeacher').classList.remove('btn-primary'); $('#viewTeacher').classList.add('btn-ghost');
+  if(teacherPollTimer) { clearInterval(teacherPollTimer); teacherPollTimer = null; }
+});
+
+$('#viewTeacher').addEventListener('click', () => {
+  renderTeacher();
+  $('#viewTeacher').classList.add('btn-primary'); $('#viewTeacher').classList.remove('btn-ghost');
+  $('#viewParent').classList.remove('btn-primary'); $('#viewParent').classList.add('btn-ghost');
+  // start polling to reflect changes on other devices (if using localStorage, different tabs can poll)
+  if(!teacherPollTimer){
+    teacherPollTimer = setInterval(renderTeacher, POLL_INTERVAL);
+  }
+});
+
+/* default view = parent */
+showParent();
+
+</script>
+</body>
+</html>
