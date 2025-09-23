@@ -9,9 +9,9 @@ app.use(express.json());
 
 // PostgreSQL connection
 const pool = new Pool({
-  user: 'iuliacarla',         // e.g. 'postgres'
+  user: 'postgres',         // e.g. 'postgres'
   host: 'localhost',         // or your cloud DB host
-  database: 'pickup_app',    // your database name
+  database: 'iuliacarla',    // your database name
   password: 'your_password', // your DB password
   port: 5432                 // default PostgreSQL port
 });
