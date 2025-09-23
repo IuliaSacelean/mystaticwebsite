@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Afterschool Pickup</title>
+  <style>
+    body { font-family: sans-serif; max-width: 400px; margin: 2rem auto; }
+    .state { display: none; }
+    .active { display: block; }
+    button { margin-top: 1rem; padding: 0.5rem 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Afterschool Pickup</h1>
+
+  <!-- Step 1: Parent name -->
+  <div id="step1" class="state active">
+    <label>Parent Name:</label><br>
+    <input type="text" id="parentName"><br>
+    <button onclick="goToStep(2)">Next</button>
+  </div>
+
+  <!-- Step 2: Kid name -->
+  <div id="step2" class="state">
+    <label>Kid Name:</label><br>
+    <input type="text" id="kidName"><br>
+    <button onclick="goToStep(3)">Next</button>
+  </div>
+
+  <!-- Step 3: Outcome -->
+  <div id="step3" class="state">
+    <p>Outcome:</p>
+    <button onclick="finish('Picked')">Picked</button>
+    <button onclick="finish('Not Picked')">Not Picked</button>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="state"></div>
+
+  <script>
+    function goToStep(step) {
+      document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+      document.getElementById('step' + step).classList.add('active');
+    }
+
+    function finish(outcome) {
+      const parent = document.getElementById('parentName').value || 'Unknown Parent';
+      const kid = document.getElementById('kidName').value || 'Unknown Kid';
+
+      const result = document.getElementById('result');
+      result.innerHTML = `<h2>Summary</h2>
+        <p>Parent: <strong>${parent}</strong></p>
+        <p>Kid: <strong>${kid}</strong></p>
+        <p>Outcome: <strong>${outcome}</strong></p>`;
+      document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+      result.classList.add('active');
+    }
+  </script>
+</body>
+</html>
