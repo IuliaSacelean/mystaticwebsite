@@ -28,11 +28,11 @@ app.get('/events', async (req, res) => {
 
 // POST new event
 app.post('/events', async (req, res) => {
-  const { childId, childName, who, note, status } = req.body;
+  const { child_id, child_name, who, note, status } = req.body;
   try {
     const result = await pool.query(
       'INSERT INTO events (child_id, child_name, who, note, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [childId, childName, who, note, status]
+      [child_id, child_name, who, note, status]
     );
     res.json(result.rows[0]);
   } catch (err) {

@@ -65,11 +65,13 @@
         const child = demoChildren.find(c => c.id === childId);
 
         const evt = {
+  child_id: child.id,
   child_name: child.name,
   who,
   note,
   status: 'arrived'
 };
+
 
         const res = await fetch(`${API_BASE}/events`, {
           method: 'POST',
