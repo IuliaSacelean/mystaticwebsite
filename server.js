@@ -58,4 +58,4 @@ app.patch('/events/:id', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('🚀 Server running on https://unwailed-creepier-cory.ngrok-free.dev'));
+app.listen(3000, () => console.log('🚀 Server running on https://unwailed-creepier-cory.ngrok-free.dev/events'));

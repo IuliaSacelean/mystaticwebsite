@@ -6,9 +6,9 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <h2>🏫 Lista sosiri</h2>
-  <div id="main"></div>
+  <div id="main">Se încarcă...</div>
+
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
     const $ = (s) => document.querySelector(s);
@@ -23,28 +23,27 @@
 
         const active = events.filter(e => e.status === 'arrived');
         const picked = events.filter(e => e.status === 'picked');
-        $('#main').innerHTML = `<div>✅ Script is running</div>`;
 
         $('#main').innerHTML = `
           <div>
             <button id="refreshBtn">🔄 Refresh</button>
 
-            <div style="margin-top:12px">
+            <div style="margin-top:16px">
               <strong>Sosiri active</strong>
-              ${active.length === 0 ? `<div>Niciun părinte încă.</div>` :
+              ${active.length === 0 ? `<div style="margin-top:8px">Niciun părinte încă.</div>` :
                 active.map(e => `
-                  <div style="margin:8px 0; border-bottom:1px solid #ccc; padding-bottom:4px">
+                  <div style="margin:12px 0; border-bottom:1px solid #ccc; padding-bottom:6px">
                     <strong>${e.child_name}</strong> — ${e.who}<br/>
                     <span>${humanTime(e.ts)} ${e.note ? '· ' + e.note : ''}</span><br/>
-                    <button data-id="${e.id}" class="markPicked">✅ Picked up</button>
+                    <button data-id="${e.id}" class="markPicked">✅ Ridicat</button>
                   </div>
                 `).join('')
               }
             </div>
 
-            <div style="margin-top:20px">
+            <div style="margin-top:24px">
               <strong>Istoric (azi)</strong>
-              ${picked.length === 0 ? `<div>Nicio ridicare finalizată.</div>` :
+              ${picked.length === 0 ? `<div style="margin-top:8px">Nicio ridicare finalizată.</div>` :
                 picked.map(p => `<div>${humanTime(p.ts)} — ${p.child_name} — ${p.who}</div>`).join('')
               }
             </div>
@@ -66,7 +65,7 @@
         $('#refreshBtn').addEventListener('click', renderTeacher);
       } catch (err) {
         console.error('Failed to fetch or render events:', err);
-        $('#main').innerHTML = `<div style="color:red">❌ Eroare la încărcarea datelor.</div>`;
+        $('#main').innerHTML = `<div style="color:red; margin-top:16px">❌ Eroare la încărcarea datelor.</div>`;
       }
     }
 
