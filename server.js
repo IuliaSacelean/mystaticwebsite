@@ -55,5 +55,5 @@ app.patch('/events/:id', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('🚀 Server running on http://yourdailyqadose.com:3000'));
+app.listen(3000, () => console.log('🚀 Server running on http://yourdailyqadose.com/parent:3000'));
 
