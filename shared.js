@@ -162,5 +162,22 @@ async function renderTeacher(){
       localStorage.removeItem(STORAGE_KEY);
       renderTeacher();
     }
+    async function saveEvent(evt){
+        await db.collection("events").add(evt);
+        console.log("Saved to Firebase:", evt); // ✅ confirm in browser console
+        return evt;
+      }
+      db.collection("events").onSnapshot(snapshot => {
+  snapshot.docs.forEach(doc => {
+    console.log("Live update:", doc.data());
+  });
+});
+
+db.collection("events").onSnapshot(snapshot => {
+    snapshot.docs.forEach(doc => {
+      console.log("Live update:", doc.data());
+    });
+  });
+  
   });
 }

@@ -1,16 +1,17 @@
-// storage.js
-const API_BASE = null;
-const STORAGE_KEY = 'pickupapp_events_v1';
-
-export const demoChildren = [
-  {id: 'c1', name: 'Andrei Pop'},
-  {id: 'c2', name: 'Maria Ionescu'},
-  {id: 'c3', name: 'Ioan Georgescu'}
-];
-
-export const timeNow = () => new Date().toISOString();
-export const humanTime = (iso) => new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-
-export async function getEvents() { /* same as before */ }
-export async function saveEvent(evt) { /* same as before */ }
-export async function updateEvent(id, patch) { /* same as before */ }
+// Save event
+async function saveEvent(evt){
+    await db.collection("events").add(evt);
+    return evt;
+  }
+  
+  // Get events
+  async function getEvents(){
+    const snapshot = await db.collection("events").get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+  
+  // Update event
+  async function updateEvent(id, patch){
+    await db.collection("events").doc(id).update(patch);
+  }
+  

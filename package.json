@@ -91,6 +91,7 @@
         }
     },
     "dependencies": {
-        "allure": "^3.0.0-beta.16"
+        "allure": "^3.0.0-beta.16",
+        "firebase": "^12.3.0"
     }
 }

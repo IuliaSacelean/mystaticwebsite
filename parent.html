@@ -3,6 +3,24 @@
 <head>
   <title>Pickup App – Parent</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyB9AaRWYFTeOtuvOq5uoZv5-RuY0obpaCk",
+  authDomain: "pickupaftershcool.firebaseapp.com",
+  projectId: "pickupaftershcool",
+  storageBucket: "pickupaftershcool.firebasestorage.app",
+  messagingSenderId: "128255602156",
+  appId: "1:128255602156:web:6f1060aedb12f0aee824c9",
+  measurementId: "G-YQ39V9QGHV"
+};
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
 </head>
 <body>
   <h2>👨‍👩‍👧‍👦 Ridicare copil</h2>
