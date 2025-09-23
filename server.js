@@ -4,11 +4,15 @@ const cors = require('cors');
 const { Pool } = require('pg');
 
 const app = express();
+// Removed invalid block. Use a middleware like http-proxy-middleware if proxying is needed.
+  
+// Removed invalid block. Ensure proper routing or middleware is implemented if needed.
+  
 app.use(cors({
     origin: ['https://yourdailyqadose.com']
   }));
   
-app.use(express.json());
+
 
 // PostgreSQL connection
 const pool = new Pool({
