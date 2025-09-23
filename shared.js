@@ -1,6 +1,8 @@
 /* CONFIG */
 const POLL_INTERVAL = 3000;
 const STORAGE_KEY = 'pickupapp_events_v1';
+const API_BASE = 'http://localhost:3000';
+
 
 /* Demo children (10 users) */
 const demoChildren = [

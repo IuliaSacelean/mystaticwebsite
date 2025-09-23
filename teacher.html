@@ -2,31 +2,67 @@
 <html>
 <head>
   <title>Pickup App – Teacher</title>
+  <meta charset="UTF-8">
   <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
-
-<script>
- const firebaseConfig = {
-  apiKey: "AIzaSyB9AaRWYFTeOtuvOq5uoZv5-RuY0obpaCk",
-  authDomain: "pickupaftershcool.firebaseapp.com",
-  projectId: "pickupaftershcool",
-  storageBucket: "pickupaftershcool.firebasestorage.app",
-  messagingSenderId: "128255602156",
-  appId: "1:128255602156:web:6f1060aedb12f0aee824c9",
-  measurementId: "G-YQ39V9QGHV"
-};
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
-
 </head>
 <body>
   <h2>🏫 Lista sosiri</h2>
   <div id="main"></div>
-  <script src="shared.js"></script>
+
   <script>
+    const API_BASE = 'http://localhost:3000';
+    const $ = (s) => document.querySelector(s);
+    const timeNow = () => new Date().toISOString();
+    const humanTime = (iso) => new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+    async function renderTeacher(){
+      const res = await fetch(`${API_BASE}/events`);
+      const events = await res.json();
+
+      const active = events.filter(e => e.status === 'arrived');
+      const picked = events.filter(e => e.status === 'picked');
+
+      $('#main').innerHTML = `
+        <div>
+          <button id="refreshBtn">🔄 Refresh</button>
+          <button id="clearBtn">🗑️ Clear (manual in DB)</button>
+          <div style="margin-top:12px">
+            <strong>Sosiri active</strong>
+            ${active.length === 0 ? `<div>Niciun părinte încă.</div>` :
+              active.map(e => `
+                <div style="margin:8px 0; border-bottom:1px solid #ccc; padding-bottom:4px">
+                  <strong>${e.child_name}</strong> — ${e.who}<br/>
+                  <span>${humanTime(e.ts)} ${e.note ? '· ' + e.note : ''}</span><br/>
+                  <button data-id="${e.id}" class="markPicked">✅ Picked up</button>
+                </div>
+              `).join('')
+            }
+          </div>
+
+          <div style="margin-top:20px">
+            <strong>Istoric (azi)</strong>
+            ${picked.length === 0 ? `<div>Nicio ridicare finalizată.</div>` :
+              picked.map(p => `<div>${humanTime(p.ts)} — ${p.child_name} — ${p.who}</div>`).join('')
+            }
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll('.markPicked').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          await fetch(`${API_BASE}/events/${id}`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ status: 'picked' })
+          });
+          renderTeacher();
+        });
+      });
+
+      $('#refreshBtn').addEventListener('click', renderTeacher);
+    }
+
     renderTeacher();
     setInterval(renderTeacher, 3000); // auto-refresh
   </script>

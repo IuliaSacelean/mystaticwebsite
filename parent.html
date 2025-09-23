@@ -2,30 +2,86 @@
 <html>
 <head>
   <title>Pickup App – Parent</title>
+  <meta charset="UTF-8">
   <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
-
-<script>
-  const firebaseConfig = {
-  apiKey: "AIzaSyB9AaRWYFTeOtuvOq5uoZv5-RuY0obpaCk",
-  authDomain: "pickupaftershcool.firebaseapp.com",
-  projectId: "pickupaftershcool",
-  storageBucket: "pickupaftershcool.firebasestorage.app",
-  messagingSenderId: "128255602156",
-  appId: "1:128255602156:web:6f1060aedb12f0aee824c9",
-  measurementId: "G-YQ39V9QGHV"
-};
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
-
 </head>
 <body>
   <h2>👨‍👩‍👧‍👦 Ridicare copil</h2>
   <div id="main"></div>
-  <script src="shared.js"></script>
-  <script>showParent();</script>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+
+    const demoChildren = [
+      {id: 'c1', name: 'Andrei Pop'},
+      {id: 'c2', name: 'Maria Ionescu'},
+      {id: 'c3', name: 'Ioan Georgescu'},
+      {id: 'c4', name: 'Elena Dobre'},
+      {id: 'c5', name: 'Victor Stan'},
+      {id: 'c6', name: 'Ana Pavel'},
+      {id: 'c7', name: 'Radu Enache'},
+      {id: 'c8', name: 'Irina Munteanu'},
+      {id: 'c9', name: 'Darius Ilie'},
+      {id: 'c10', name: 'Sofia Dragomir'}
+    ];
+
+    const $ = (s) => document.querySelector(s);
+    const timeNow = () => new Date().toISOString();
+    const humanTime = (iso) => new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+    function showParent(){
+      $('#main').innerHTML = `
+        <div>
+          <label>Alege copil</label><br/>
+          <select id="childSelect">
+            ${demoChildren.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+          </select><br/><br/>
+
+          <label>Cine ridică?</label><br/>
+          <select id="whoSelect">
+            <option>Eu</option>
+            <option>Tată</option>
+            <option>Mamă</option>
+            <option>Bunică</option>
+            <option>Altă persoană</option>
+          </select><br/><br/>
+
+          <label>Notă (opțional)</label><br/>
+          <input type="text" id="noteInput" placeholder="ex: vine cu bunica"><br/><br/>
+
+          <button id="checkInBtn">Sunt aici</button>
+          <div id="confirm" style="margin-top:10px; display:none;"></div>
+        </div>
+      `;
+
+      $('#checkInBtn').addEventListener('click', async () => {
+        const childId = $('#childSelect').value;
+        const who = $('#whoSelect').value;
+        const note = $('#noteInput').value.trim();
+        const child = demoChildren.find(c => c.id === childId);
+
+        const evt = {
+          childId,
+          childName: child.name,
+          who,
+          note,
+          status: 'arrived'
+        };
+
+        const res = await fetch(`${API_BASE}/events`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(evt)
+        });
+
+        const saved = await res.json();
+        $('#confirm').style.display = 'block';
+        $('#confirm').innerHTML = `✅ Ai raportat sosirea pentru <strong>${saved.child_name}</strong> la ${humanTime(saved.ts)}. Așteaptă lângă poartă.`;
+        $('#noteInput').value = '';
+      });
+    }
+
+    showParent();
+  </script>
 </body>
 </html>
