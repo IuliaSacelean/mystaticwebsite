@@ -7,8 +7,8 @@
 </head>
 <body>
 
-  <div id="main"></div>
   <h2>🏫 Lista sosiri</h2>
+  <div id="main"></div>
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
     const $ = (s) => document.querySelector(s);
@@ -23,6 +23,7 @@
 
         const active = events.filter(e => e.status === 'arrived');
         const picked = events.filter(e => e.status === 'picked');
+        $('#main').innerHTML = `<div>✅ Script is running</div>`;
 
         $('#main').innerHTML = `
           <div>
