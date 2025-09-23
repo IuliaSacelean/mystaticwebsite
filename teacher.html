@@ -10,7 +10,7 @@
   <div id="main"></div>
 
   <script>
-    const API_BASE = 'https://yourdailyqadose.com:3000/events';
+    const API_BASE = 'https://yourdailyqadose.com:3000';
     const $ = (s) => document.querySelector(s);
     const timeNow = () => new Date().toISOString();
     const humanTime = (iso) => new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
