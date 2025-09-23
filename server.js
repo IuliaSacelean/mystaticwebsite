@@ -4,23 +4,16 @@ const cors = require('cors');
 const { Pool } = require('pg');
 
 const app = express();
-// Removed invalid block. Use a middleware like http-proxy-middleware if proxying is needed.
-  
-// Removed invalid block. Ensure proper routing or middleware is implemented if needed.
-  
-app.use(cors({
-    origin: ['https://yourdailyqadose.com']
-  }));
-  
-
+app.use(cors());
+app.use(express.json());
 
 // PostgreSQL connection
 const pool = new Pool({
-    user: 'iuliacarla',
-    host: 'localhost',
-    database: 'iuliacarla',
-    password: 'testing',
-    port: 5432,  // Default PostgreSQL port
+  user: 'iuliacarla',         // e.g. 'postgres'
+  host: 'localhost',         // or your cloud DB host
+  database: 'pickup_app',    // your database name
+  password: 'your_password', // your DB password
+  port: 5432                 // default PostgreSQL port
 });
 
 // GET all events
@@ -62,5 +55,4 @@ app.patch('/events/:id', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('🚀 Server running on https://yourdailyqadose.com'));
-
+app.listen(3000, () => console.log('🚀 Server running on  https://unwailed-creepier-cory.ngrok-free.dev'));
