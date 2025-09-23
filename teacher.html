@@ -15,52 +15,58 @@
     const humanTime = (iso) => new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 
     async function renderTeacher() {
-      const res = await fetch(`${API_BASE}/events`);
-      const events = await res.json();
+      try {
+        const res = await fetch(`${API_BASE}/events`);
+        const events = await res.json();
+        console.log('Fetched events:', events); // ✅ Debug log
 
-      const active = events.filter(e => e.status === 'arrived');
-      const picked = events.filter(e => e.status === 'picked');
+        const active = events.filter(e => e.status === 'arrived');
+        const picked = events.filter(e => e.status === 'picked');
 
-      $('#main').innerHTML = `
-        <div>
-          <button id="refreshBtn">🔄 Refresh</button>
-          <button id="clearBtn">🗑️ Clear (manual in DB)</button>
+        $('#main').innerHTML = `
+          <div>
+            <button id="refreshBtn">🔄 Refresh</button>
+            <button id="clearBtn">🗑️ Clear (manual in DB)</button>
 
-          <div style="margin-top:12px">
-            <strong>Sosiri active</strong>
-            ${active.length === 0 ? `<div>Niciun părinte încă.</div>` :
-              active.map(e => `
-                <div style="margin:8px 0; border-bottom:1px solid #ccc; padding-bottom:4px">
-                  <strong>${e.child_name}</strong> — ${e.who}<br/>
-                  <span>${humanTime(e.timestamp)} ${e.note ? '· ' + e.note : ''}</span><br/>
-                  <button data-id="${e.id}" class="markPicked">✅ Picked up</button>
-                </div>
-              `).join('')
-            }
+            <div style="margin-top:12px">
+              <strong>Sosiri active</strong>
+              ${active.length === 0 ? `<div>Niciun părinte încă.</div>` :
+                active.map(e => `
+                  <div style="margin:8px 0; border-bottom:1px solid #ccc; padding-bottom:4px">
+                    <strong>${e.child_name}</strong> — ${e.who}<br/>
+                    <span>${humanTime(e.ts)} ${e.note ? '· ' + e.note : ''}</span>
+                    <button data-id="${e.id}" class="markPicked">✅ Picked up</button>
+                  </div>
+                `).join('')
+              }
+            </div>
+
+            <div style="margin-top:20px">
+              <strong>Istoric (azi)</strong>
+              ${picked.length === 0 ? `<div>Nicio ridicare finalizată.</div>` :
+              picked.map(p => `<div>${humanTime(p.ts)} — ${p.child_name} — ${p.who}</div>`).join('')
+              }
+            </div>
           </div>
+        `;
 
-          <div style="margin-top:20px">
-            <strong>Istoric (azi)</strong>
-            ${picked.length === 0 ? `<div>Nicio ridicare finalizată.</div>` :
-              picked.map(p => `<div>${humanTime(p.timestamp)} — ${p.child_name} — ${p.who}</div>`).join('')
-            }
-          </div>
-        </div>
-      `;
-
-      document.querySelectorAll('.markPicked').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const id = btn.dataset.id;
-          await fetch(`${API_BASE}/events/${id}`, {
-            method: 'PATCH',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ status: 'picked' })
+        document.querySelectorAll('.markPicked').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            await fetch(`${API_BASE}/events/${id}`, {
+              method: 'PATCH',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ status: 'picked' })
+            });
+            renderTeacher();
           });
-          renderTeacher();
         });
-      });
 
-      $('#refreshBtn').addEventListener('click', renderTeacher);
+        $('#refreshBtn').addEventListener('click', renderTeacher);
+      } catch (err) {
+        console.error('Failed to fetch events:', err);
+        $('#main').innerHTML = `<div style="color:red">❌ Eroare la încărcarea datelor.</div>`;
+      }
     }
 
     renderTeacher();
