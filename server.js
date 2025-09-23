@@ -9,11 +9,11 @@ app.use(express.json());
 
 // PostgreSQL connection
 const pool = new Pool({
-  user: 'postgres',         // e.g. 'postgres'
-  host: 'localhost',         // or your cloud DB host
-  database: 'iuliacarla',    // your database name
-  password: 'your_password', // your DB password
-  port: 5432                 // default PostgreSQL port
+  user: 'postgres',
+  host: 'localhost',
+  database: 'iuliacarla',
+  password: 'your_password',
+  port: 5432
 });
 
 // GET all events
@@ -22,6 +22,7 @@ app.get('/events', async (req, res) => {
     const result = await pool.query('SELECT * FROM events ORDER BY ts DESC');
     res.json(result.rows);
   } catch (err) {
+    console.error('GET /events error:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -31,11 +32,12 @@ app.post('/events', async (req, res) => {
   const { child_id, child_name, who, note, status } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO events (child_id, child_name, who, note, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      'INSERT INTO events (child_id, child_name, who, note, status, ts) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *',
       [child_id, child_name, who, note, status]
     );
     res.json(result.rows[0]);
   } catch (err) {
+    console.error('POST /events error:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -51,8 +53,9 @@ app.patch('/events/:id', async (req, res) => {
     );
     res.json(result.rows[0]);
   } catch (err) {
+    console.error('PATCH /events/:id error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-app.listen(3000, () => console.log('🚀 Server running on  https://unwailed-creepier-cory.ngrok-free.dev'));
+app.listen(3000, () => console.log('🚀 Server running on https://unwailed-creepier-cory.ngrok-free.dev'));
