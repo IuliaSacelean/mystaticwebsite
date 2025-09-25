@@ -10,11 +10,7 @@
   <div id="main"></div>
 
   <script>
-   // const API_BASE = 'https://yourdailyqadose.com';
-   const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
-
-
-
+    const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
 
     const demoChildren = [
       {id: 'c1', name: 'Andrei Pop'},
@@ -30,16 +26,16 @@
     ];
 
     const $ = (s) => document.querySelector(s);
-    const timeNow = () => new Date().toISOString();
-    const humanTime = (iso) => new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    const humanTime = (iso) => {
+      const d = new Date(iso);
+      return isNaN(d.getTime()) ? '🕓 dată invalidă' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
 
-    function showParent(){
+    function showParent() {
       $('#main').innerHTML = `
         <div>
-          <label>Alege copil</label><br/>
-          <select id="childSelect">
-            ${demoChildren.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
-          </select><br/><br/>
+          <label>Nume copil (prenume + nume)</label><br/>
+          <input type="text" id="childInput" placeholder="ex: Maria Ionescu"><br/><br/>
 
           <label>Cine ridică?</label><br/>
           <select id="whoSelect">
@@ -59,23 +55,28 @@
       `;
 
       $('#checkInBtn').addEventListener('click', async () => {
-        const childId = $('#childSelect').value;
+        const fullName = $('#childInput').value.trim();
         const who = $('#whoSelect').value;
         const note = $('#noteInput').value.trim();
-        const child = demoChildren.find(c => c.id === childId);
+        const child = demoChildren.find(c => c.name.toLowerCase() === fullName.toLowerCase());
+
+        if (!child) {
+          $('#confirm').style.display = 'block';
+          $('#confirm').innerHTML = `<div style="color:red">❌ Numele copilului nu este recunoscut. Verifică ortografia completă.</div>`;
+          return;
+        }
 
         const evt = {
-  child_id: child.id,
-  child_name: child.name,
-  who,
-  note,
-  status: 'arrived'
-};
-
+          child_id: child.id,
+          child_name: child.name,
+          who,
+          note,
+          status: 'arrived'
+        };
 
         const res = await fetch(`${API_BASE}/events`, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(evt)
         });
 
@@ -83,6 +84,7 @@
         $('#confirm').style.display = 'block';
         $('#confirm').innerHTML = `✅ Ai raportat sosirea pentru <strong>${saved.child_name}</strong> la ${humanTime(saved.ts)}. Așteaptă lângă poartă.`;
         $('#noteInput').value = '';
+        $('#childInput').value = '';
       });
     }
 
