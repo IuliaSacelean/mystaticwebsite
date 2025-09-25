@@ -7,17 +7,30 @@
 </head>
 <body>
   <h2>🏫 Lista sosiri</h2>
-  <div id="main">Se încarcă...</div>
+  <div id="main"></div>
 
   <script>
+    // Replace with your current ngrok URL
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
+
     const $ = (s) => document.querySelector(s);
-    const humanTime = (iso) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const humanTime = (iso) => new Date(iso).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+
+    // helper to build full API URL
+    const API = (path) => `${API_BASE}${path}`;
 
     async function renderTeacher() {
       try {
-        const res = await fetch(`${API_BASE}/events`);
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        // fetch with ngrok skip header
+        const res = await fetch(API('/events'), {
+          headers: {
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          }
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+
         const events = await res.json();
         console.log('Fetched events:', events);
 
@@ -27,24 +40,23 @@
         $('#main').innerHTML = `
           <div>
             <button id="refreshBtn">🔄 Refresh</button>
-
-            <div style="margin-top:16px">
+            <div style="margin-top:12px">
               <strong>Sosiri active</strong>
-              ${active.length === 0 ? `<div style="margin-top:8px">Niciun părinte încă.</div>` :
+              ${active.length === 0 ? `<div>Niciun părinte încă.</div>` :
                 active.map(e => `
-                  <div style="margin:12px 0; border-bottom:1px solid #ccc; padding-bottom:6px">
+                  <div style="margin:8px 0; border-bottom:1px solid #ccc; padding-bottom:4px">
                     <strong>${e.child_name}</strong> — ${e.who}<br/>
-                    <span>${humanTime(e.ts)} ${e.note ? '· ' + e.note : ''}</span><br/>
-                    <button data-id="${e.id}" class="markPicked">✅ Ridicat</button>
+                    <span>${humanTime(e.timestamp)} ${e.note ? '· ' + e.note : ''}</span><br/>
+                    <button data-id="${e.id}" class="markPicked">✅ Picked up</button>
                   </div>
                 `).join('')
               }
             </div>
 
-            <div style="margin-top:24px">
+            <div style="margin-top:20px">
               <strong>Istoric (azi)</strong>
-              ${picked.length === 0 ? `<div style="margin-top:8px">Nicio ridicare finalizată.</div>` :
-                picked.map(p => `<div>${humanTime(p.ts)} — ${p.child_name} — ${p.who}</div>`).join('')
+              ${picked.length === 0 ? `<div>Nicio ridicare finalizată.</div>` :
+                picked.map(p => `<div>${humanTime(p.timestamp)} — ${p.child_name} — ${p.who}</div>`).join('')
               }
             </div>
           </div>
@@ -53,9 +65,12 @@
         document.querySelectorAll('.markPicked').forEach(btn => {
           btn.addEventListener('click', async () => {
             const id = btn.dataset.id;
-            await fetch(`${API_BASE}/events/${id}`, {
+            await fetch(API(`/events/${id}`), {
               method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true'
+              },
               body: JSON.stringify({ status: 'picked' })
             });
             renderTeacher();
@@ -63,16 +78,15 @@
         });
 
         $('#refreshBtn').addEventListener('click', renderTeacher);
+
       } catch (err) {
-        console.error('Failed to fetch or render events:', err);
-        $('#main').innerHTML = `<div style="color:red; margin-top:16px">❌ Eroare la încărcarea datelor.</div>`;
+        console.error('Fetch failed:', err);
+        $('#main').innerHTML = `<div style="color:red">❌ Eroare la încărcare: ${err.message}</div>`;
       }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      renderTeacher();
-      setInterval(renderTeacher, 3000);
-    });
+    renderTeacher();
+    setInterval(renderTeacher, 3000); // auto-refresh
   </script>
 </body>
 </html>
