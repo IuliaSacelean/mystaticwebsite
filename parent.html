@@ -3,8 +3,8 @@
 <head>
   <title>Pickup App – Parent</title>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h2>👨‍👩‍👧‍👦 Ridicare copil</h2>
@@ -27,10 +27,20 @@
     ];
 
     const $ = (s) => document.querySelector(s);
+
     const humanTime = (iso) => {
       const d = new Date(iso);
       return isNaN(d.getTime()) ? '🕓 dată invalidă' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
+
+    function normalizeName(name) {
+      return name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, '') // remove accents
+        .replace(/\s+/g, ' ')            // collapse multiple spaces
+        .trim();
+    }
 
     function showParent() {
       $('#main').innerHTML = `
@@ -50,7 +60,7 @@
           <input type="text" id="noteInput" placeholder="ex: vine cu bunica"><br/><br/>
 
           <button id="checkInBtn">Sunt aici</button>
-          <div id="confirm" style="margin-top:10px; display:none;"></div>
+          <div id="confirm" style="margin-top:10px; display:none; padding:12px; background:#e6f7ff; border-left:4px solid #4a90e2; border-radius:6px;"></div>
         </div>
       `;
 
@@ -58,11 +68,12 @@
         const fullName = $('#childInput').value.trim();
         const who = $('#whoSelect').value;
         const note = $('#noteInput').value.trim();
-        const child = demoChildren.find(c => c.name.toLowerCase() === fullName.toLowerCase());
+        const inputName = normalizeName(fullName);
+        const child = demoChildren.find(c => normalizeName(c.name) === inputName);
 
         if (!child) {
           $('#confirm').style.display = 'block';
-          $('#confirm').innerHTML = `<div style="color:red">❌ Numele copilului nu este cunoscut. Verifică numele sa fie complet de forma: Nume familie + Prenume.</div>`;
+          $('#confirm').innerHTML = `<div style="color:red">❌ Numele copilului nu este cunoscut. Verifică să fie complet și corect: Nume familie + Prenume.</div>`;
           return;
         }
 
@@ -82,7 +93,10 @@
 
         const saved = await res.json();
         $('#confirm').style.display = 'block';
-        $('#confirm').innerHTML = `✅ Ai raportat sosirea pentru <strong>${saved.child_name}</strong> la ${humanTime(saved.ts)}. Așteaptă lângă poartă.`;
+        $('#confirm').innerHTML = `
+          ✅ Ai raportat sosirea pentru <strong>${saved.child_name}</strong> la ${humanTime(saved.ts)}.<br/>
+          Așteaptă lângă poartă.
+        `;
         $('#noteInput').value = '';
         $('#childInput').value = '';
       });
