@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -58,4 +57,19 @@ app.patch('/events/:id', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('🚀 Server running on https://unwailed-creepier-cory.ngrok-free.dev/events'));
+// POST analytics event
+app.post('/analytics', async (req, res) => {
+  const { page, event, action, timestamp } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO analytics (page, event, action, ts) VALUES ($1, $2, $3, $4) RETURNING *',
+      [page, event, action || null, timestamp || new Date().toISOString()]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('POST /analytics error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.listen(3000, () => console.log('🚀 Server running on https://unwailed-creepier-cory.ngrok-free.dev'));

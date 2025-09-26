@@ -19,9 +19,20 @@
   <audio id="checkinSound" src="checkin.mp3" preload="auto"></audio>
 
   <script>
-    let soundEnabled = false;
+    const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
 
-    // Enable sound after any user interaction
+    // Log page view
+    fetch(`${API_BASE}/analytics`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'teacher',
+        event: 'view',
+        timestamp: new Date().toISOString()
+      })
+    });
+
+    let soundEnabled = false;
     document.addEventListener('click', () => soundEnabled = true);
     document.addEventListener('touchstart', () => soundEnabled = true);
 
@@ -33,7 +44,6 @@
       }
     }
 
-    const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
     const $ = (s) => document.querySelector(s);
     const humanTime = (iso) => {
       const d = new Date(iso);
@@ -93,6 +103,18 @@
 
         document.querySelectorAll('.markPicked').forEach(btn => {
           btn.addEventListener('click', async () => {
+            // Log interaction
+            fetch(`${API_BASE}/analytics`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                page: 'teacher',
+                event: 'interaction',
+                action: 'markPicked',
+                timestamp: new Date().toISOString()
+              })
+            });
+
             const id = btn.dataset.id;
             await fetch(API(`/events/${id}`), {
               method: 'PATCH',
@@ -106,7 +128,20 @@
           });
         });
 
-        $('#refreshBtn').addEventListener('click', renderTeacher);
+        $('#refreshBtn').addEventListener('click', () => {
+          // Log interaction
+          fetch(`${API_BASE}/analytics`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              page: 'teacher',
+              event: 'interaction',
+              action: 'refresh',
+              timestamp: new Date().toISOString()
+            })
+          });
+          renderTeacher();
+        });
 
       } catch (err) {
         console.error('Fetch failed:', err);

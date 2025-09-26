@@ -7,19 +7,29 @@
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="edupickuplogo.png">
- <link rel="apple-touch-icon" href="edupickuplogo.png">
-
+  <link rel="apple-touch-icon" href="edupickuplogo.png">
 </head>
 <body>
-  <h2>Ridicare copil - Check in <div style="text-align:center; margin-bottom:25px;margin-top: 10px;">
+  <h2>Ridicare copil - Check in</h2>
+  <div style="text-align:center; margin-bottom:25px;margin-top: 10px;">
     <img src="edupickuplogo.png" alt="EduPickup Logo" style="max-width:100px; height:auto;">
-  </div></h2>
+  </div>
+
   <div id="main"></div>
-  
-  
 
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
+
+    // Log page view
+    fetch(`${API_BASE}/analytics`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'parent',
+        event: 'view',
+        timestamp: new Date().toISOString()
+      })
+    });
 
     const demoChildren = [
       {id: 'c1', name: 'Sacelean Sara'},
@@ -31,7 +41,7 @@
       {id: 'c7', name: 'Radu Enache'},
       {id: 'c8', name: 'Eddie Munteanu'},
       {id: 'c9', name: 'Darius Ilie'},
-      {id: 'c10',name: 'Ionescu Maria'}
+      {id: 'c10', name: 'Ionescu Maria'}
     ];
 
     const $ = (s) => document.querySelector(s);
@@ -45,8 +55,8 @@
       return name
         .toLowerCase()
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, '') // remove accents
-        .replace(/\s+/g, ' ')            // collapse multiple spaces
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
         .trim();
     }
 
@@ -67,12 +77,23 @@
           <label>Notă (opțional)</label><br/>
           <input type="text" id="noteInput" placeholder="ex: vine cu bunica"><br/><br/>
 
-          <button id="checkInBtn">Sunt la poarta </button>
+          <button id="checkInBtn">Sunt la poarta</button>
           <div id="confirm" style="margin-top:10px; display:none; padding:12px; background:#e6f7ff; border-left:4px solid #4a90e2; border-radius:6px;"></div>
         </div>
       `;
 
       $('#checkInBtn').addEventListener('click', async () => {
+        // Log interaction
+        fetch(`${API_BASE}/analytics`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            page: 'parent',
+            event: 'interaction',
+            timestamp: new Date().toISOString()
+          })
+        });
+
         const fullName = $('#childInput').value.trim();
         const who = $('#whoSelect').value;
         const note = $('#noteInput').value.trim();
@@ -112,24 +133,24 @@
 
     showParent();
   </script>
+
   <script>
     function checkCookies() {
-        const cookieBanner = document.getElementById('cookie-banner');
-        const cookiesAccepted = localStorage.getItem('cookiesAccepted');
-
-        if (!cookiesAccepted) {
-            cookieBanner.style.display = 'block';
-        }
+      const cookieBanner = document.getElementById('cookie-banner');
+      const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+      if (!cookiesAccepted) {
+        cookieBanner.style.display = 'block';
+      }
     }
 
     function acceptCookies() {
-        localStorage.setItem('cookiesAccepted', 'true');
-        document.getElementById('cookie-banner').style.display = 'none';
-    }  
-</script>  
- <footer style="text-align:center; padding:20px; font-size:14px; color:#faf4f4;">
-  &copy; 2025 EduPickup. All rights reserved.
-</footer>
+      localStorage.setItem('cookiesAccepted', 'true');
+      document.getElementById('cookie-banner').style.display = 'none';
+    }
+  </script>
 
+  <footer style="text-align:center; padding:20px; font-size:14px; color:#faf4f4;">
+    &copy; 2025 EduPickup. All rights reserved.
+  </footer>
 </body>
 </html>
