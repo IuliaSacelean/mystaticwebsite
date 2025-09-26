@@ -59,7 +59,7 @@
     cursor: pointer;
   }
   h2 {
-    color: #b80f3f;
+    color: #f0e1f6;
     font-size: 36px;
     margin-bottom: 1rem;
   }
@@ -197,19 +197,19 @@ body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 16px;
-  background-color: #f0f4f8;
-  color: #333;
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: #f5e9e9;
 }
 
 h2 {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 26px;
 }
 
 #main {
   max-width: 600px;
   margin: auto;
-  background: #fff;
+  background: linear-gradient(to right, #00242e, #03326d);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -217,9 +217,10 @@ h2 {
 
 label {
   font-weight: bold;
-  color: #555;
+  color: #f0dcdc;
   display: block;
   margin-top: 12px;
+  font-size: 36px;
 }
 
 input[type="text"],
@@ -230,8 +231,8 @@ select {
   margin-bottom: 12px;
   border: 1px solid #d0d7de;
   border-radius: 6px;
-  font-size: 16px;
-  background-color: #fff;
+  font-size: 20px;
+  background-color: #ffffff;
 }
 
 button {
@@ -246,7 +247,7 @@ button {
 }
 
 button:hover {
-  background-color: #357ABD;
+  background-color: #bbd4ed;
 }
 
 #confirm {
