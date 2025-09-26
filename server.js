@@ -57,7 +57,18 @@ app.patch('/events/:id', async (req, res) => {
   }
 });
 
-// POST analytics event
+// GET analytics
+app.get('/analytics', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM analytics ORDER BY ts DESC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('GET /analytics error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST analytics
 app.post('/analytics', async (req, res) => {
   const { page, event, action, timestamp } = req.body;
   try {
