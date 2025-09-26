@@ -1,17 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-     <!-- Google tag (gtag.js) -->
-     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
-     <meta name="google-adsense-account" content="ca-pub-1200109181407050">
-     <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-G-2GE589Z2W2');
-  </script>
   <title>Edu Pickup App – Teacher</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +8,16 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="edupickuplogo.png">
   <link rel="apple-touch-icon" href="edupickuplogo.png">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
+  <meta name="google-adsense-account" content="ca-pub-1200109181407050">
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-2GE589Z2W2');
+  </script>
 </head>
 <body>
   <h2>Lista Sosiri - Check out</h2>
@@ -32,7 +31,7 @@
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
 
-    // Log page view
+    // Log page view to your backend
     fetch(`${API_BASE}/analytics`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -41,6 +40,13 @@
         event: 'view',
         timestamp: new Date().toISOString()
       })
+    });
+
+    // Log page view to Google Analytics
+    gtag('event', 'page_view', {
+      page_title: 'Teacher Dashboard',
+      page_location: window.location.href,
+      page_path: '/teacher.html'
     });
 
     let soundEnabled = false;
@@ -114,7 +120,9 @@
 
         document.querySelectorAll('.markPicked').forEach(btn => {
           btn.addEventListener('click', async () => {
-            // Log interaction
+            const id = btn.dataset.id;
+
+            // Log to backend
             fetch(`${API_BASE}/analytics`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -126,7 +134,13 @@
               })
             });
 
-            const id = btn.dataset.id;
+            // Log to Google Analytics
+            gtag('event', 'markPicked', {
+              event_category: 'Teacher',
+              event_label: id,
+              value: 1
+            });
+
             await fetch(API(`/events/${id}`), {
               method: 'PATCH',
               headers: {
@@ -140,7 +154,7 @@
         });
 
         $('#refreshBtn').addEventListener('click', () => {
-          // Log interaction
+          // Log to backend
           fetch(`${API_BASE}/analytics`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -151,6 +165,14 @@
               timestamp: new Date().toISOString()
             })
           });
+
+          // Log to Google Analytics
+          gtag('event', 'refresh', {
+            event_category: 'Teacher',
+            event_label: 'Refresh clicked',
+            value: 1
+          });
+
           renderTeacher();
         });
 
