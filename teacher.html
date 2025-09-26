@@ -8,25 +8,40 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="edupickuplogo.png">
   <link rel="apple-touch-icon" href="edupickuplogo.png">
-
-
 </head>
 <body>
-  <h2>Lista Sosiri - Check out <div style="text-align:center; margin-bottom:25px;margin-top: 10px;">
+  <h2>Lista Sosiri - Check out</h2>
+  <div style="text-align:center; margin-bottom:25px;margin-top: 10px;">
     <img src="edupickuplogo.png" alt="EduPickup Logo" style="max-width:100px; height:auto;">
-  </div></h2>
+  </div>
+
   <div id="main">Se încarcă...</div>
+  <audio id="checkinSound" src="soundbeep.mp3" preload="auto"></audio>
 
   <script>
+    let soundEnabled = false;
+
+    // Enable sound after any user interaction
+    document.addEventListener('click', () => soundEnabled = true);
+    document.addEventListener('touchstart', () => soundEnabled = true);
+
+    function playCheckinSound() {
+      if (!soundEnabled) return;
+      const sound = document.getElementById('checkinSound');
+      if (sound) {
+        sound.play().catch(e => console.log("Playback failed:", e));
+      }
+    }
+
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
     const $ = (s) => document.querySelector(s);
-
     const humanTime = (iso) => {
       const d = new Date(iso);
       return isNaN(d.getTime()) ? '🕓 dată invalidă' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
-
     const API = (path) => `${API_BASE}${path}`;
+
+    let lastActiveIds = [];
 
     async function renderTeacher() {
       try {
@@ -40,10 +55,15 @@
         if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
 
         const events = await res.json();
-        console.log('Fetched events:', events);
-
         const active = events.filter(e => e.status === 'arrived');
         const picked = events.filter(e => e.status === 'picked');
+
+        const currentActiveIds = active.map(e => e.id);
+        const newArrivals = currentActiveIds.filter(id => !lastActiveIds.includes(id));
+        if (newArrivals.length > 0) {
+          playCheckinSound();
+        }
+        lastActiveIds = currentActiveIds;
 
         $('#main').innerHTML = `
           <div>
@@ -97,24 +117,9 @@
     renderTeacher();
     setInterval(renderTeacher, 3000);
   </script>
-  <script>
-    function checkCookies() {
-        const cookieBanner = document.getElementById('cookie-banner');
-        const cookiesAccepted = localStorage.getItem('cookiesAccepted');
 
-        if (!cookiesAccepted) {
-            cookieBanner.style.display = 'block';
-        }
-    }
-
-    function acceptCookies() {
-        localStorage.setItem('cookiesAccepted', 'true');
-        document.getElementById('cookie-banner').style.display = 'none';
-    }  
-</script>  
   <footer style="text-align:center; padding:20px; font-size:14px; color:#f7eeee;">
     &copy; 2025 EduPickup. All rights reserved.
   </footer>
-  
 </body>
 </html>
