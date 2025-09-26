@@ -1,7 +1,7 @@
 {
     "name": "EduPickup",
     "short_name": "EduPickup",
-    "start_url": "/",
+    "start_url": "/parent.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#1e3a8a",
