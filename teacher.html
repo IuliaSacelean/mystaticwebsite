@@ -1,57 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>EduPickup – Teacher</title>
+  <title>Edu Pickup App – Teacher</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="edupickuplogo.png">
+  <link rel="apple-touch-icon" href="edupickuplogo.png">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
+  <meta name="google-adsense-account" content="ca-pub-1200109181407050">
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-2GE589Z2W2');
+  </script>
 </head>
 <body>
-  <h2 id="header">Lista Sosiri</h2>
-  <div style="text-align:center; margin-bottom:25px;">
-    <img src="edupickuplogo.png" alt="EduPickup Logo" style="max-width:100px;">
+  <h2>Lista Sosiri - Check out</h2>
+  <div style="text-align:center; margin-bottom:25px;margin-top: 10px;">
+    <img src="edupickuplogo.png" alt="EduPickup Logo" style="max-width:100px; height:auto;">
   </div>
+
   <div id="main">Se încarcă...</div>
   <audio id="checkinSound" src="checkin.mp3" preload="auto"></audio>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const groupId = urlParams.get('group') || 'default';
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
+
+    fetch(`${API_BASE}/analytics`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'teacher',
+        event: 'view',
+        timestamp: new Date().toISOString()
+      })
+    });
+
+    gtag('event', 'page_view', {
+      page_title: 'Teacher Dashboard',
+      page_location: window.location.href,
+      page_path: '/teacher.html'
+    });
 
     let soundEnabled = false;
     let suppressSound = false;
     let lastCheckinTs = null;
-    let lastActiveIds = [];
 
-    document.addEventListener('click', () => soundEnabled = true);
-    document.addEventListener('touchstart', () => soundEnabled = true);
+    document.addEventListener('click', () => {
+      soundEnabled = true;
+    });
+
+    document.addEventListener('touchstart', () => {
+      soundEnabled = true;
+    });
 
     function playCheckinSound() {
       const sound = document.getElementById('checkinSound');
-      if (soundEnabled && sound) sound.play().catch(() => {});
+      if (soundEnabled && sound) {
+        sound.play().catch(e => console.log("Playback failed:", e));
+      }
     }
 
     const $ = (s) => document.querySelector(s);
-    const humanTime = (iso) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const humanTime = (iso) => {
+      const d = new Date(iso);
+      return isNaN(d.getTime()) ? '🕓 dată invalidă' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
     const API = (path) => `${API_BASE}${path}`;
+
+    let lastActiveIds = [];
 
     async function renderTeacher() {
       try {
         const res = await fetch(API('/events'), {
-          headers: { 'Accept': 'application/json', 'ngrok-skip-browser-warning': 'true' }
+          headers: {
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          }
         });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+
         const events = await res.json();
-        const filtered = events.filter(e => e.group === groupId);
-        const active = filtered.filter(e => e.status === 'arrived');
-        const picked = filtered.filter(e => e.status === 'picked');
+        const active = events.filter(e => e.status === 'arrived');
+        const picked = events.filter(e => e.status === 'picked');
 
         const currentActiveIds = active.map(e => e.id);
         const newArrivals = currentActiveIds.filter(id => !lastActiveIds.includes(id));
-        const newestArrival = active.find(e => newArrivals.includes(e.id));
 
-        if (newestArrival && soundEnabled && !suppressSound &&
-            (!lastCheckinTs || new Date(newestArrival.ts) > new Date(lastCheckinTs))) {
+        const newestArrival = active.find(e => newArrivals.includes(e.id));
+        if (
+          newestArrival &&
+          soundEnabled &&
+          !suppressSound &&
+          (!lastCheckinTs || new Date(newestArrival.ts) > new Date(lastCheckinTs))
+        ) {
           playCheckinSound();
           lastCheckinTs = newestArrival.ts;
         }
@@ -61,13 +109,13 @@
 
         $('#main').innerHTML = `
           <div>
-            <strong>Grup: ${groupId}</strong><br/>
             <button id="refreshBtn">🔄 Refresh</button>
+
             <div style="margin-top:12px">
               <strong>Sosiri active</strong>
               ${active.length === 0 ? `<div>Niciun părinte încă.</div>` :
                 active.map(e => `
-                  <div style="margin:8px 0; border-bottom:1px solid #ccc;">
+                  <div style="margin:8px 0; border-bottom:1px solid #ccc; padding-bottom:4px">
                     <strong>${e.child_name}</strong> — ${e.who}<br/>
                     <span>${humanTime(e.ts)} ${e.note ? '· ' + e.note : ''}</span><br/>
                     <button data-id="${e.id}" class="markPicked">✅ Ridicat</button>
@@ -75,6 +123,7 @@
                 `).join('')
               }
             </div>
+
             <div style="margin-top:20px">
               <strong>Istoric (azi)</strong>
               ${picked.length === 0 ? `<div>Nicio ridicare finalizată.</div>` :
@@ -86,11 +135,32 @@
 
         document.querySelectorAll('.markPicked').forEach(btn => {
           btn.addEventListener('click', async () => {
-            suppressSound = true;
             const id = btn.dataset.id;
+            suppressSound = true;
+
+            fetch(`${API_BASE}/analytics`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                page: 'teacher',
+                event: 'interaction',
+                action: 'markPicked',
+                timestamp: new Date().toISOString()
+              })
+            });
+
+            gtag('event', 'markPicked', {
+              event_category: 'Teacher',
+              event_label: id,
+              value: 1
+            });
+
             await fetch(API(`/events/${id}`), {
               method: 'PATCH',
-              headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+              headers: {
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true'
+              },
               body: JSON.stringify({ status: 'picked' })
             });
             renderTeacher();
@@ -99,16 +169,39 @@
 
         $('#refreshBtn').addEventListener('click', () => {
           suppressSound = true;
+
+          fetch(`${API_BASE}/analytics`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              page: 'teacher',
+              event: 'interaction',
+              action: 'refresh',
+              timestamp: new Date().toISOString()
+            })
+          });
+
+          gtag('event', 'refresh', {
+            event_category: 'Teacher',
+            event_label: 'Refresh clicked',
+            value: 1
+          });
+
           renderTeacher();
         });
 
       } catch (err) {
-        $('#main').innerHTML = `<div style="color:red">❌ Eroare: ${err.message}</div>`;
+        console.error('Fetch failed:', err);
+        $('#main').innerHTML = `<div style="color:red">❌ Eroare la încărcare: ${err.message}</div>`;
       }
     }
 
     renderTeacher();
     setInterval(renderTeacher, 3000);
   </script>
+
+  <footer style="text-align:center; padding:20px; font-size:14px; color:#f7eeee;">
+    &copy; 2025 EduPickup. All rights reserved.
+  </footer>
 </body>
 </html>

@@ -29,8 +29,6 @@
 
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
-    const urlParams = new URLSearchParams(window.location.search);
-    const groupId = urlParams.get('group') || 'default';
 
     // Log page view to backend
     fetch(`${API_BASE}/analytics`, {
@@ -38,7 +36,6 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         page: 'parent',
-        group: groupId,
         event: 'view',
         timestamp: new Date().toISOString()
       })
@@ -48,27 +45,21 @@
     gtag('event', 'page_view', {
       page_title: 'Parent Check-In',
       page_location: window.location.href,
-      page_path: '/parent.html',
-      group: groupId
+      page_path: '/parent.html'
     });
 
-    const childrenByGroup = {
-      'scoala4-group1': [
-        {id: 'c1', name: 'Sacelean Sara'},
-        {id: 'c2', name: 'Ana Popescu'},
-        {id: 'c3', name: 'Lucas Georgescu'},
-        {id: 'c4', name: 'Tudor Dobre'},
-        {id: 'c5', name: 'Vlad Stan'},
-        {id: 'c6', name: 'Sara Pavel'},
-        {id: 'c7', name: 'Radu Enache'},
-        {id: 'c8', name: 'Eddie Munteanu'},
-        {id: 'c9', name: 'Darius Ilie'},
-        {id: 'c10', name: 'Ionescu Maria'}
-      ]
-      // Add more groups here as needed
-    };
-
-    const demoChildren = childrenByGroup[groupId] || [];
+    const demoChildren = [
+      {id: 'c1', name: 'Sacelean Sara'},
+      {id: 'c2', name: 'Ana Popescu'},
+      {id: 'c3', name: 'Lucas Georgescu'},
+      {id: 'c4', name: 'Tudor Dobre'},
+      {id: 'c5', name: 'Vlad Stan'},
+      {id: 'c6', name: 'Sara Pavel'},
+      {id: 'c7', name: 'Radu Enache'},
+      {id: 'c8', name: 'Eddie Munteanu'},
+      {id: 'c9', name: 'Darius Ilie'},
+      {id: 'c10', name: 'Ionescu Maria'}
+    ];
 
     const $ = (s) => document.querySelector(s);
 
@@ -89,7 +80,6 @@
     function showParent() {
       $('#main').innerHTML = `
         <div>
-          <strong>Grup: ${groupId}</strong><br/><br/>
           <label>Nume copil (nume + prenume)</label><br/>
           <input type="text" id="childInput" placeholder="ex: Ionescu Maria"><br/><br/>
 
@@ -116,7 +106,6 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             page: 'parent',
-            group: groupId,
             event: 'interaction',
             action: 'checkin',
             timestamp: new Date().toISOString()
@@ -127,7 +116,6 @@
         gtag('event', 'checkin', {
           event_category: 'Parent',
           event_label: $('#childInput').value.trim(),
-          group: groupId,
           value: 1
         });
 
@@ -144,13 +132,11 @@
         }
 
         const evt = {
-          group: groupId,
           child_id: child.id,
           child_name: child.name,
           who,
           note,
-          status: 'arrived',
-          ts: new Date().toISOString()
+          status: 'arrived'
         };
 
         const res = await fetch(`${API_BASE}/events`, {
@@ -171,6 +157,21 @@
     }
 
     showParent();
+  </script>
+
+  <script>
+    function checkCookies() {
+      const cookieBanner = document.getElementById('cookie-banner');
+      const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+      if (!cookiesAccepted) {
+        cookieBanner.style.display = 'block';
+      }
+    }
+
+    function acceptCookies() {
+      localStorage.setItem('cookiesAccepted', 'true');
+      document.getElementById('cookie-banner').style.display = 'none';
+    }
   </script>
 
   <footer style="text-align:center; padding:20px; font-size:14px; color:#faf4f4;">
