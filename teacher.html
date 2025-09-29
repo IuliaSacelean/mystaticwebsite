@@ -31,7 +31,6 @@
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
 
-    // Log page view to backend
     fetch(`${API_BASE}/analytics`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -42,7 +41,6 @@
       })
     });
 
-    // Log page view to Google Analytics
     gtag('event', 'page_view', {
       page_title: 'Teacher Dashboard',
       page_location: window.location.href,
@@ -51,6 +49,7 @@
 
     let soundEnabled = false;
     let suppressSound = false;
+    let lastCheckinTs = null;
 
     document.addEventListener('click', () => {
       soundEnabled = true;
@@ -94,8 +93,15 @@
         const currentActiveIds = active.map(e => e.id);
         const newArrivals = currentActiveIds.filter(id => !lastActiveIds.includes(id));
 
-        if (newArrivals.length > 0 && soundEnabled && !suppressSound) {
+        const newestArrival = active.find(e => newArrivals.includes(e.id));
+        if (
+          newestArrival &&
+          soundEnabled &&
+          !suppressSound &&
+          (!lastCheckinTs || new Date(newestArrival.ts) > new Date(lastCheckinTs))
+        ) {
           playCheckinSound();
+          lastCheckinTs = newestArrival.ts;
         }
 
         lastActiveIds = currentActiveIds;
@@ -132,7 +138,6 @@
             const id = btn.dataset.id;
             suppressSound = true;
 
-            // Log to backend
             fetch(`${API_BASE}/analytics`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -144,7 +149,6 @@
               })
             });
 
-            // Log to Google Analytics
             gtag('event', 'markPicked', {
               event_category: 'Teacher',
               event_label: id,
@@ -166,7 +170,6 @@
         $('#refreshBtn').addEventListener('click', () => {
           suppressSound = true;
 
-          // Log to backend
           fetch(`${API_BASE}/analytics`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -178,7 +181,6 @@
             })
           });
 
-          // Log to Google Analytics
           gtag('event', 'refresh', {
             event_category: 'Teacher',
             event_label: 'Refresh clicked',
