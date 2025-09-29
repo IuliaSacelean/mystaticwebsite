@@ -50,13 +50,16 @@
     });
 
     let soundEnabled = false;
+    let suppressSound = false;
+
     document.addEventListener('click', () => {
       soundEnabled = true;
-      playCheckinSound(); // unlock audio on first tap
+      playCheckinSound(); // unlock audio
     });
+
     document.addEventListener('touchstart', () => {
       soundEnabled = true;
-      playCheckinSound(); // unlock audio on first touch
+      playCheckinSound(); // unlock audio
     });
 
     function playCheckinSound() {
@@ -92,10 +95,13 @@
 
         const currentActiveIds = active.map(e => e.id);
         const newArrivals = currentActiveIds.filter(id => !lastActiveIds.includes(id));
-        if (newArrivals.length > 0 && soundEnabled) {
+
+        if (newArrivals.length > 0 && soundEnabled && !suppressSound) {
           playCheckinSound();
         }
+
         lastActiveIds = currentActiveIds;
+        suppressSound = false;
 
         $('#main').innerHTML = `
           <div>
@@ -126,6 +132,7 @@
         document.querySelectorAll('.markPicked').forEach(btn => {
           btn.addEventListener('click', async () => {
             const id = btn.dataset.id;
+            suppressSound = true;
 
             // Log to backend
             fetch(`${API_BASE}/analytics`, {
@@ -159,6 +166,8 @@
         });
 
         $('#refreshBtn').addEventListener('click', () => {
+          suppressSound = true;
+
           // Log to backend
           fetch(`${API_BASE}/analytics`, {
             method: 'POST',
