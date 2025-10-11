@@ -18,7 +18,7 @@
   </script>
 </head>
 <body>
-  <h2>Ridicare copil - Check in</h2>
+  <h2>Ridicare copil - Ecran parinte</h2>
   <div style="text-align:center; margin-bottom:25px;margin-top: 10px;">
     <img src="edupickuplogo.png" alt="EduPickup Logo" style="max-width:100px; height:auto;">
   </div>
@@ -33,7 +33,7 @@
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
-    const groupId = new URLSearchParams(window.location.search).get('group') || 'scoala4-group1';
+    const groupId = new URLSearchParams(window.location.search).get('group') || 'scoala4-clasa1E';
 
     const fetchWithHeaders = (url, options = {}) => {
       options.headers = {
@@ -82,7 +82,7 @@
       $('#main').innerHTML = `
         <div>
           <label>Nume copil</label><br/>
-          <input type="text" id="childInput"><br/><br/>
+          <input type="text" id="childInput" placeholder="Nume familie și prenume, ex: Ionescu Maria"><br/><br/>
           <label>Cine ridică?</label><br/>
           <select id="whoSelect"><option>Tata</option><option>Mama</option><option>Bunica</option><option>Altă persoană</option></select><br/><br/>
           <label>Notă (opțional)</label><br/>
@@ -101,7 +101,7 @@
 
         if (!child) {
           $('#confirm').style.display = 'block';
-          $('#confirm').innerHTML = `<div style="color:red">❌ Numele copilului nu este cunoscut.</div>`;
+          $('#confirm').innerHTML = `<div style="color:red">❌ Numele copilului nu este cunoscut.Va rugam introduceti numele sub forma: nume familie + nume</div>`;
           return;
         }
 
