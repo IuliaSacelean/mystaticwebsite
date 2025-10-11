@@ -18,13 +18,14 @@
   </script>
 </head>
 <body>
-  <h2>Lista Sosiri - Check out - Ecran Doamna Invatatoare Nicoleta</h2>
+  <h2>Lista Sosiri - Check out - Ecran Doamna Invatatoare </h2>
   <div style="text-align:center; margin-bottom:25px;margin-top: 10px;">
     <img src="edupickuplogo.png" alt="EduPickup Logo" style="max-width:100px; height:auto;">
   </div>
 
   <div id="main">Se încarcă...</div>
   <audio id="checkinSound" src="checkin.mp3" preload="auto"></audio>
+  <div id="soundActivator" style="display:none;"></div>
 
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
@@ -63,6 +64,20 @@
 
     document.addEventListener('click', () => { soundEnabled = true; });
     document.addEventListener('touchstart', () => { soundEnabled = true; });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const activator = document.getElementById('soundActivator');
+      activator.addEventListener('touchstart', () => {
+        soundEnabled = true;
+        const sound = document.getElementById('checkinSound');
+        sound.play().catch(() => {});
+      });
+      activator.addEventListener('click', () => {
+        soundEnabled = true;
+        const sound = document.getElementById('checkinSound');
+        sound.play().catch(() => {});
+      });
+    });
 
     function playCheckinSound() {
       const sound = document.getElementById('checkinSound');
