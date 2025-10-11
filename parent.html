@@ -8,8 +8,6 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="edupickuplogo.png">
   <link rel="apple-touch-icon" href="edupickuplogo.png">
-
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
   <meta name="google-adsense-account" content="ca-pub-1200109181407050">
   <script>
@@ -27,25 +25,40 @@
 
   <div id="main"></div>
 
+  <div style="text-align:center; margin-top:30px;">
+    <p>Scanează pentru check-in rapid:</p>
+    <canvas id="qrCanvas" width="180" height="180" style="margin-top:10px;"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
+    const groupId = new URLSearchParams(window.location.search).get('group') || 'scoala4-group1';
 
-    // Log page view to backend
-    fetch(`${API_BASE}/analytics`, {
+    const fetchWithHeaders = (url, options = {}) => {
+      options.headers = {
+        ...options.headers,
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+      };
+      return fetch(url, options);
+    };
+
+    fetchWithHeaders(`${API_BASE}/analytics`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         page: 'parent',
+        group: groupId,
         event: 'view',
         timestamp: new Date().toISOString()
       })
     });
 
-    // Log page view to Google Analytics
     gtag('event', 'page_view', {
       page_title: 'Parent Check-In',
       page_location: window.location.href,
-      page_path: '/parent.html'
+      page_path: '/parent.html',
+      group: groupId
     });
 
     const demoChildren = [
@@ -62,63 +75,24 @@
     ];
 
     const $ = (s) => document.querySelector(s);
-
-    const humanTime = (iso) => {
-      const d = new Date(iso);
-      return isNaN(d.getTime()) ? '🕓 dată invalidă' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-
-    function normalizeName(name) {
-      return name
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
+    const humanTime = (iso) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const normalizeName = (name) => name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').trim();
 
     function showParent() {
       $('#main').innerHTML = `
         <div>
-          <label>Nume copil (nume + prenume)</label><br/>
-          <input type="text" id="childInput" placeholder="ex: Ionescu Maria"><br/><br/>
-
+          <label>Nume copil</label><br/>
+          <input type="text" id="childInput"><br/><br/>
           <label>Cine ridică?</label><br/>
-          <select id="whoSelect">
-            <option>Tata</option>
-            <option>Mama</option>
-            <option>Bunica</option>
-            <option>Altă persoană</option>
-          </select><br/><br/>
-
+          <select id="whoSelect"><option>Tata</option><option>Mama</option><option>Bunica</option><option>Altă persoană</option></select><br/><br/>
           <label>Notă (opțional)</label><br/>
-          <input type="text" id="noteInput" placeholder="ex: vine cu bunica"><br/><br/>
-
+          <input type="text" id="noteInput"><br/><br/>
           <button id="checkInBtn">Sunt la poarta</button>
-          <div id="confirm" style="margin-top:10px; display:none; padding:12px; background:#e6f7ff; border-left:4px solid #4a90e2; border-radius:6px;"></div>
+          <div id="confirm" style="margin-top:10px; display:none;"></div>
         </div>
       `;
 
       $('#checkInBtn').addEventListener('click', async () => {
-        // Log interaction to backend
-        fetch(`${API_BASE}/analytics`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            page: 'parent',
-            event: 'interaction',
-            action: 'checkin',
-            timestamp: new Date().toISOString()
-          })
-        });
-
-        // Log interaction to Google Analytics
-        gtag('event', 'checkin', {
-          event_category: 'Parent',
-          event_label: $('#childInput').value.trim(),
-          value: 1
-        });
-
         const fullName = $('#childInput').value.trim();
         const who = $('#whoSelect').value;
         const note = $('#noteInput').value.trim();
@@ -127,7 +101,7 @@
 
         if (!child) {
           $('#confirm').style.display = 'block';
-          $('#confirm').innerHTML = `<div style="color:red">❌ Numele copilului nu este cunoscut. Verifică să fie complet și corect: Nume familie + Prenume.</div>`;
+          $('#confirm').innerHTML = `<div style="color:red">❌ Numele copilului nu este cunoscut.</div>`;
           return;
         }
 
@@ -136,42 +110,31 @@
           child_name: child.name,
           who,
           note,
+          group: groupId,
           status: 'arrived'
         };
 
-        const res = await fetch(`${API_BASE}/events`, {
+        const res = await fetchWithHeaders(`${API_BASE}/events`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(evt)
         });
 
         const saved = await res.json();
         $('#confirm').style.display = 'block';
-        $('#confirm').innerHTML = `
-          ✅ Ai raportat sosirea pentru <strong>${saved.child_name}</strong> la ${humanTime(saved.ts)}.<br/>
-          Așteaptă lângă poartă.
-        `;
+        $('#confirm').innerHTML = `✅ Ai raportat sosirea pentru <strong>${saved.child_name}</strong> la ${humanTime(saved.ts)}.`;
         $('#noteInput').value = '';
         $('#childInput').value = '';
       });
     }
 
-    showParent();
-  </script>
+    window.onload = () => {
+      showParent();
 
-  <script>
-    function checkCookies() {
-      const cookieBanner = document.getElementById('cookie-banner');
-      const cookiesAccepted = localStorage.getItem('cookiesAccepted');
-      if (!cookiesAccepted) {
-        cookieBanner.style.display = 'block';
-      }
-    }
-
-    function acceptCookies() {
-      localStorage.setItem('cookiesAccepted', 'true');
-      document.getElementById('cookie-banner').style.display = 'none';
-    }
+      const qrUrl = `https://unwailed-creepier-cory.ngrok-free.dev/parent.html?group=${groupId}`;
+      QRCode.toCanvas(document.getElementById('qrCanvas'), qrUrl, { width: 180 }, function (error) {
+        if (error) console.error(error);
+      });
+    };
   </script>
 
   <footer style="text-align:center; padding:20px; font-size:14px; color:#faf4f4;">

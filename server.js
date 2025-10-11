@@ -1,12 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// PostgreSQL connection
+// ✅ Serve static files from current folder
+app.use(express.static(__dirname));
+
+// ✅ PostgreSQL connection
 const pool = new Pool({
   user: 'iuliacarla',
   host: 'localhost',
@@ -15,10 +19,13 @@ const pool = new Pool({
   port: 5432
 });
 
-// GET all events
+// ✅ GET all events (with optional group filtering)
 app.get('/events', async (req, res) => {
+  const group = req.query.group;
   try {
-    const result = await pool.query('SELECT * FROM events ORDER BY ts DESC');
+    const result = group
+      ? await pool.query('SELECT * FROM events WHERE "group" = $1 ORDER BY ts DESC', [group])
+      : await pool.query('SELECT * FROM events ORDER BY ts DESC');
     res.json(result.rows);
   } catch (err) {
     console.error('GET /events error:', err);
@@ -26,13 +33,13 @@ app.get('/events', async (req, res) => {
   }
 });
 
-// POST new event
+// ✅ POST new event (includes group)
 app.post('/events', async (req, res) => {
-  const { child_id, child_name, who, note, status } = req.body;
+  const { child_id, child_name, who, note, status, group } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO events (child_id, child_name, who, note, status, ts) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *',
-      [child_id, child_name, who, note, status]
+      'INSERT INTO events (child_id, child_name, who, note, status, "group", ts) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *',
+      [child_id, child_name, who, note, status, group]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -41,7 +48,7 @@ app.post('/events', async (req, res) => {
   }
 });
 
-// PATCH update event status
+// ✅ PATCH update event status
 app.patch('/events/:id', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -57,7 +64,7 @@ app.patch('/events/:id', async (req, res) => {
   }
 });
 
-// GET analytics
+// ✅ GET analytics
 app.get('/analytics', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM analytics ORDER BY ts DESC');
@@ -68,13 +75,13 @@ app.get('/analytics', async (req, res) => {
   }
 });
 
-// POST analytics
+// ✅ POST analytics (includes group)
 app.post('/analytics', async (req, res) => {
-  const { page, event, action, timestamp } = req.body;
+  const { page, event, action, timestamp, group } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO analytics (page, event, action, ts) VALUES ($1, $2, $3, $4) RETURNING *',
-      [page, event, action || null, timestamp || new Date().toISOString()]
+      'INSERT INTO analytics (page, event, action, "group", ts) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [page, event, action || null, group || null, timestamp || new Date().toISOString()]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -83,4 +90,7 @@ app.post('/analytics', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('🚀 Server running on https://unwailed-creepier-cory.ngrok-free.dev'));
+// ✅ Start server
+app.listen(3000, () => {
+  console.log('🚀 Server running on https://unwailed-creepier-cory.ngrok-free.dev');
+});

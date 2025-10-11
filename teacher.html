@@ -8,8 +8,6 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="edupickuplogo.png">
   <link rel="apple-touch-icon" href="edupickuplogo.png">
-
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
   <meta name="google-adsense-account" content="ca-pub-1200109181407050">
   <script>
@@ -30,12 +28,22 @@
 
   <script>
     const API_BASE = 'https://unwailed-creepier-cory.ngrok-free.dev';
+    const groupId = new URLSearchParams(window.location.search).get('group') || 'default';
 
-    fetch(`${API_BASE}/analytics`, {
+    const fetchWithHeaders = (url, options = {}) => {
+      options.headers = {
+        ...options.headers,
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+      };
+      return fetch(url, options);
+    };
+
+    fetchWithHeaders(`${API_BASE}/analytics`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         page: 'teacher',
+        group: groupId,
         event: 'view',
         timestamp: new Date().toISOString()
       })
@@ -44,20 +52,17 @@
     gtag('event', 'page_view', {
       page_title: 'Teacher Dashboard',
       page_location: window.location.href,
-      page_path: '/teacher.html'
+      page_path: '/teacher.html',
+      group: groupId
     });
 
     let soundEnabled = false;
     let suppressSound = false;
     let lastCheckinTs = null;
+    let lastActiveIds = [];
 
-    document.addEventListener('click', () => {
-      soundEnabled = true;
-    });
-
-    document.addEventListener('touchstart', () => {
-      soundEnabled = true;
-    });
+    document.addEventListener('click', () => { soundEnabled = true; });
+    document.addEventListener('touchstart', () => { soundEnabled = true; });
 
     function playCheckinSound() {
       const sound = document.getElementById('checkinSound');
@@ -67,33 +72,24 @@
     }
 
     const $ = (s) => document.querySelector(s);
-    const humanTime = (iso) => {
-      const d = new Date(iso);
-      return isNaN(d.getTime()) ? '🕓 dată invalidă' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-    const API = (path) => `${API_BASE}${path}`;
-
-    let lastActiveIds = [];
+    const humanTime = (iso) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     async function renderTeacher() {
       try {
-        const res = await fetch(API('/events'), {
-          headers: {
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'true'
-          }
-        });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-
+        const res = await fetchWithHeaders(`${API_BASE}/events?group=${groupId}`);
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
         const events = await res.json();
+
         const active = events.filter(e => e.status === 'arrived');
         const picked = events.filter(e => e.status === 'picked');
 
+        const today = new Date().toISOString().slice(0, 10);
+        const pickedToday = picked.filter(p => p.ts.startsWith(today));
+
         const currentActiveIds = active.map(e => e.id);
         const newArrivals = currentActiveIds.filter(id => !lastActiveIds.includes(id));
-
         const newestArrival = active.find(e => newArrivals.includes(e.id));
+
         if (
           newestArrival &&
           soundEnabled &&
@@ -109,6 +105,7 @@
 
         $('#main').innerHTML = `
           <div>
+            <strong>Grup: ${groupId}</strong><br/><br/>
             <button id="refreshBtn">🔄 Refresh</button>
 
             <div style="margin-top:12px">
@@ -126,8 +123,8 @@
 
             <div style="margin-top:20px">
               <strong>Istoric (azi)</strong>
-              ${picked.length === 0 ? `<div>Nicio ridicare finalizată.</div>` :
-                picked.map(p => `<div>${humanTime(p.ts)} — ${p.child_name} — ${p.who}</div>`).join('')
+              ${pickedToday.length === 0 ? `<div>Nicio ridicare finalizată.</div>` :
+                pickedToday.map(p => `<div>${humanTime(p.ts)} — ${p.child_name} — ${p.who}</div>`).join('')
               }
             </div>
           </div>
@@ -138,11 +135,11 @@
             const id = btn.dataset.id;
             suppressSound = true;
 
-            fetch(`${API_BASE}/analytics`, {
+            fetchWithHeaders(`${API_BASE}/analytics`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 page: 'teacher',
+                group: groupId,
                 event: 'interaction',
                 action: 'markPicked',
                 timestamp: new Date().toISOString()
@@ -152,29 +149,27 @@
             gtag('event', 'markPicked', {
               event_category: 'Teacher',
               event_label: id,
+              group: groupId,
               value: 1
             });
 
-            await fetch(API(`/events/${id}`), {
+            await fetchWithHeaders(`${API_BASE}/events/${id}`, {
               method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'ngrok-skip-browser-warning': 'true'
-              },
               body: JSON.stringify({ status: 'picked' })
             });
+
             renderTeacher();
           });
         });
 
-        $('#refreshBtn').addEventListener('click', () => {
+        document.getElementById('refreshBtn').addEventListener('click', () => {
           suppressSound = true;
 
-          fetch(`${API_BASE}/analytics`, {
+          fetchWithHeaders(`${API_BASE}/analytics`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               page: 'teacher',
+              group: groupId,
               event: 'interaction',
               action: 'refresh',
               timestamp: new Date().toISOString()
@@ -184,6 +179,7 @@
           gtag('event', 'refresh', {
             event_category: 'Teacher',
             event_label: 'Refresh clicked',
+            group: groupId,
             value: 1
           });
 
