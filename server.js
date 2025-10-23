@@ -75,13 +75,15 @@ app.get('/analytics', async (req, res) => {
   }
 });
 
-// ✅ POST analytics (includes group)
+// ✅ POST analytics (uses group_name instead of reserved "group")
 app.post('/analytics', async (req, res) => {
   const { page, event, action, timestamp, group } = req.body;
+  const group_name = group?.trim().toLowerCase() || null;
+
   try {
     const result = await pool.query(
-      'INSERT INTO analytics (page, event, action, "group", ts) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [page, event, action || null, group || null, timestamp || new Date().toISOString()]
+      'INSERT INTO analytics (page, event, action, group_name, ts) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [page, event, action || null, group_name, timestamp || new Date().toISOString()]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -89,6 +91,7 @@ app.post('/analytics', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // ✅ Start server
 app.listen(3000, () => {
