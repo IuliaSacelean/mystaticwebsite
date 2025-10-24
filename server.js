@@ -15,16 +15,19 @@ const pool = new Pool({
   user: 'iuliacarla',
   host: 'localhost',
   database: 'iuliacarla',
-  password: 'your_password',
+  password: 'your_password', // replace with your actual password
   port: 5432
 });
 
 // ✅ GET all events (with optional group filtering)
 app.get('/events', async (req, res) => {
-  const group = req.query.group;
+  const group = req.query.group?.trim().toLowerCase();
   try {
     const result = group
-      ? await pool.query('SELECT * FROM events WHERE "group" = $1 ORDER BY ts DESC', [group])
+      ? await pool.query(
+          'SELECT * FROM events WHERE LOWER(group_name) = $1 ORDER BY ts DESC',
+          [group]
+        )
       : await pool.query('SELECT * FROM events ORDER BY ts DESC');
     res.json(result.rows);
   } catch (err) {
@@ -33,13 +36,15 @@ app.get('/events', async (req, res) => {
   }
 });
 
-// ✅ POST new event (includes group)
+// ✅ POST new event (uses group_name)
 app.post('/events', async (req, res) => {
-  const { child_id, child_name, who, note, status, group } = req.body;
+  const { child_id, child_name, who, note, status, group_name } = req.body;
+
   try {
     const result = await pool.query(
-      'INSERT INTO events (child_id, child_name, who, note, status, "group", ts) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *',
-      [child_id, child_name, who, note, status, group]
+      `INSERT INTO events (child_id, child_name, who, note, status, group_name, ts)
+       VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *`,
+      [child_id, child_name, who, note, status, group_name?.trim().toLowerCase()]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -47,6 +52,7 @@ app.post('/events', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // ✅ PATCH update event status
 app.patch('/events/:id', async (req, res) => {
@@ -82,7 +88,8 @@ app.post('/analytics', async (req, res) => {
 
   try {
     const result = await pool.query(
-      'INSERT INTO analytics (page, event, action, group_name, ts) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      `INSERT INTO analytics (page, event, action, group_name, ts)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [page, event, action || null, group_name, timestamp || new Date().toISOString()]
     );
     res.json(result.rows[0]);
@@ -91,7 +98,6 @@ app.post('/analytics', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // ✅ Start server
 app.listen(3000, () => {
