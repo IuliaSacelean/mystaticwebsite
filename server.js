@@ -18,6 +18,42 @@ const pool = new Pool({
   port: 5432
 });
 
+(async () => {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS scores (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      score INTEGER NOT NULL,
+      total INTEGER NOT NULL,
+      ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+})();
+app.post('/scores', async (req, res) => {
+  const { name, score, total } = req.body;
+  try {
+    const result = await pool.query(
+      `INSERT INTO scores (name, score, total) VALUES ($1, $2, $3) RETURNING *`,
+      [name, score, total]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/scores', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT name, score, total, ts FROM scores ORDER BY score DESC, ts ASC LIMIT 10`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // ✅ GET all events (with optional group filtering)
 app.get('/events', async (req, res) => {
   const group = req.query.group?.trim().toLowerCase();
@@ -148,6 +184,7 @@ app.use((req, res, next) => {
 
 // ✅ Serve static files LAST
 app.use(express.static(__dirname));
+
 
 // ✅ Start server
 app.listen(3000, () => {

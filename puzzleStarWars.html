@@ -3,27 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Star Wars Quote Puzzle</title>
-  
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
-    <meta name="google-adsense-account" content="ca-pub-1200109181407050">
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-G-2GE589Z2W2');
-    </script>
-  
-    <style>
-      /* your existing styles */
-    </style>
-  </head>
-  
   <title>Star Wars Quote Puzzle</title>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GE589Z2W2"></script>
+  <meta name="google-adsense-account" content="ca-pub-1200109181407050">
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-2GE589Z2W2');
+  </script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -66,6 +57,24 @@
       background: #007aff;
       color: white;
     }
+    #leaderboard {
+      margin-top: 30px;
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    #leaderboard h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #ffd700;
+    }
+    #leaderboard ul {
+      list-style: none;
+      padding: 0;
+    }
+    #leaderboard li {
+      margin-bottom: 5px;
+    }
   </style>
 </head>
 <body>
@@ -74,8 +83,12 @@
   <button id="nextBtn" onclick="nextPage()">Next Page</button>
   <button id="shareBtn" onclick="shareApp()">Share this App</button>
   <p id="result"></p>
+  <div id="leaderboard"></div>
   <footer>YourDailyQaDose. All Rights Reserved 2025</footer>
+
   <script>
+    const BASE_URL = 'https://unwailed-creepier-cory.ngrok-free.dev';
+
     const baseQuotes = [
       { quote: "I don't like sand. It's coarse and rough and irritating...", answer: "Anakin" },
       { quote: "So this is how liberty dies… with thunderous applause.", answer: "Padmé" },
@@ -154,7 +167,7 @@
       document.getElementById('nextBtn').innerText = (end >= total) ? 'Finish' : 'Next Page';
     }
 
-    function nextPage() {
+    async function nextPage() {
       const start = currentPage * perPage;
       const end = Math.min(start + perPage, total);
       for (let i = start; i < end; i++) {
@@ -168,9 +181,40 @@
         document.getElementById('nextBtn').style.display = 'none';
         document.getElementById('shareBtn').style.display = 'block';
         document.getElementById('result').innerHTML = `⭐ You scored <strong>${score}/${total}</strong>!`;
+
+        const name = prompt("Enter your name for the leaderboard:");
+        if (name) {
+          try {
+            await fetch(`${BASE_URL}/scores`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name, score, total })
+            });
+          } catch (err) {
+            console.error('POST /scores failed:', err);
+          }
+        }
+
+        loadLeaderboard();
       } else {
         currentPage++;
         renderPage();
+      }
+    }
+
+    async function loadLeaderboard() {
+      try {
+        const res = await fetch(`${BASE_URL}/scores`);
+        const data = await res.json();
+        const board = document.getElementById('leaderboard');
+        board.innerHTML = `
+          <h3>🏆 Leaderboard</h3>
+          <ul>
+            ${data.map(entry => `<li><strong>${entry.name}</strong>: ${entry.score}/${entry.total}</li>`).join('')}
+          </ul>
+        `;
+      } catch (err) {
+        console.error('GET /scores failed:', err);
       }
     }
 
@@ -187,7 +231,7 @@
     }
 
     renderPage();
-    
   </script>
 </body>
 </html>
+
