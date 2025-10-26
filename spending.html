@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Monthly Spending Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+  <div class="max-w-3xl mx-auto space-y-8">
+    <h1 class="text-3xl font-bold text-center text-indigo-700">💸 Monthly Spending Tracker</h1>
+
+    <!-- Add Expense -->
+    <section class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4">Add Expense</h2>
+      <form id="expenseForm" class="grid grid-cols-3 gap-4">
+        <input type="number" id="amount" placeholder="Amount (RON)" required class="border p-2 rounded col-span-1">
+        <input type="text" id="category" placeholder="Category (e.g. groceries)" required class="border p-2 rounded col-span-1">
+        <input type="month" id="month" required class="border p-2 rounded col-span-1">
+        <button type="submit" class="col-span-3 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Add Expense</button>
+      </form>
+    </section>
+
+    <!-- Monthly Summary -->
+    <section class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4">Monthly Summary</h2>
+      <ul id="summaryList" class="space-y-2 text-gray-700 text-sm"></ul>
+    </section>
+
+    <!-- All Expenses -->
+    <section class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4">All Expenses</h2>
+      <ul id="expenseList" class="space-y-1 text-sm text-gray-700"></ul>
+    </section>
+  </div>
+
+  <script>
+    const BASE_URL = 'https://yourdailyqadose.com';
+    const expenses = [];
+  
+    document.getElementById('expenseForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('amount').value);
+      const category = document.getElementById('category').value.trim();
+      const month = document.getElementById('month').value;
+  
+      if (!amount || !category || !month) return;
+  
+      try {
+        await fetch(`${BASE_URL}/expenses`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: JSON.stringify({ amount, category, month })
+        });
+  
+        document.getElementById('expenseForm').reset();
+        await loadExpenses(); // refresh list
+      } catch (err) {
+        alert('❌ Failed to save expense: ' + err.message);
+      }
+    });
+  
+    async function loadExpenses() {
+      try {
+        const res = await fetch(`${BASE_URL}/expenses`);
+        const data = await res.json();
+        expenses.length = 0;
+        expenses.push(...data);
+        renderExpenses();
+        renderSummary();
+      } catch (err) {
+        console.error('GET /expenses failed:', err);
+      }
+    }
+  
+    function renderExpenses() {
+      const list = document.getElementById('expenseList');
+      list.innerHTML = expenses.map(e =>
+        `<li class="border-b p-1">
+          <strong>${parseFloat(e.amount).toFixed(2)} RON</strong> on ${e.month} for <em>${e.category}</em>
+        </li>`
+      ).join('');
+    }
+  
+    function renderSummary() {
+      const summary = {};
+      expenses.forEach(e => {
+        summary[e.month] = (summary[e.month] || 0) + parseFloat(e.amount);
+      });
+  
+      const list = document.getElementById('summaryList');
+      list.innerHTML = Object.entries(summary).map(([month, total]) =>
+        `<li><strong>${month}</strong>: ${total.toFixed(2)} RON spent</li>`
+      ).join('');
+    }
+  
+    loadExpenses(); // initial load
+  </script>
+  
+</body>
+</html>
