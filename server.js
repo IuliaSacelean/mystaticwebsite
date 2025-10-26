@@ -4,6 +4,8 @@ const { Pool } = require('pg');
 const path = require('path');
 
 const app = express();
+
+// ✅ Middleware first
 app.use(cors());
 app.use(express.json());
 
@@ -33,7 +35,7 @@ app.get('/events', async (req, res) => {
   }
 });
 
-// ✅ POST new event (uses group_name)
+// ✅ POST new event
 app.post('/events', async (req, res) => {
   const { child_id, child_name, who, note, status, group_name } = req.body;
   try {
@@ -76,7 +78,7 @@ app.get('/analytics', async (req, res) => {
   }
 });
 
-// ✅ POST analytics (uses group_name instead of reserved "group")
+// ✅ POST analytics
 app.post('/analytics', async (req, res) => {
   const { page, event, action, timestamp, group } = req.body;
   const group_name = group?.trim().toLowerCase() || null;
@@ -96,7 +98,7 @@ app.post('/analytics', async (req, res) => {
 // ✅ POST new expense
 app.post('/expenses', async (req, res) => {
   const { amount, category, month } = req.body;
-  console.log('📥 Incoming expense:', { amount, category, month }); // ✅ Add this
+  console.log('📥 Incoming expense:', { amount, category, month });
 
   try {
     const result = await pool.query(
@@ -104,14 +106,13 @@ app.post('/expenses', async (req, res) => {
        VALUES ($1, $2, $3) RETURNING *`,
       [amount, category, month]
     );
-    console.log('✅ Saved to DB:', result.rows[0]); // ✅ Add this
+    console.log('✅ Saved to DB:', result.rows[0]);
     res.json(result.rows[0]);
   } catch (err) {
     console.error('❌ POST /expenses error:', err);
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // ✅ GET all expenses
 app.get('/expenses', async (req, res) => {
@@ -138,6 +139,12 @@ app.get('/expenses', async (req, res) => {
     );
   `);
 })();
+
+// ✅ Catch-all logger for debugging
+app.use((req, res, next) => {
+  console.log(`Unhandled request: ${req.method} ${req.url}`);
+  next();
+});
 
 // ✅ Serve static files LAST
 app.use(express.static(__dirname));
