@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fortune Bowl</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #fdf6e3, #fceabb);
+      color: #5c3d00;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 500px;
+      padding: 2rem;
+      background: #fff8e1;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 80%;
+      padding: 0.8rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      border: 1px solid #d4a373;
+    }
+
+    button {
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      background-color: #d4a373;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #c58b5e;
+    }
+
+    #fortuneDisplay {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      font-style: italic;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+   
+
+    
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔮 Ask the Fortune Bowl</h1>
+    <input type="text" id="questionInput" placeholder="Type your question..." />
+    
+    <div class="bowl-container">
+      <div class="bowl" id="bowl"></div>
+    </div>
+
+    <button id="drawButton">Draw a Fortune 🍪</button>
+    <div id="fortuneDisplay" class="hidden"></div>
+  </div>
+
+  <script>
+    const fortunes = [
+      "You will discover a hidden talent.",
+      "A warm surprise awaits you.",
+      "Trust your instincts — they’re right.",
+      "Today is a good day to start something new.",
+      "Someone is thinking of you fondly.",
+      "Your kindness will be returned tenfold.",
+      "A magical opportunity is near.",
+      "You are stronger than you realize.",
+      "A small joy will brighten your day.",
+      "Your question will be answered in dreams.",
+      "The stars are aligning in your favor.",
+      "You will receive unexpected praise.",
+      "A gentle breeze carries good news.",
+      "Your creativity will inspire others.",
+      "A door will open where you least expect.",
+      "You are exactly where you need to be.",
+      "A spark of joy will light your path.",
+      "Your courage will be rewarded.",
+      "A friend will bring laughter soon.",
+      "Your heart already knows the answer.",
+      "You will find peace in a quiet moment.",
+      "A new connection will feel familiar.",
+      "Your idea will blossom beautifully.",
+      "You are surrounded by quiet blessings.",
+      "A tiny miracle is on its way.",
+      "You will be guided by kindness.",
+      "Your patience will pay off soon.",
+      "A message will arrive when you need it.",
+      "You are more loved than you know.",
+      "A forgotten wish will come true.",
+      "You will feel light as a feather.",
+      "Your smile will change someone’s day.",
+      "A cozy moment is waiting for you.",
+      "You will be the reason someone believes.",
+      "A gentle answer will bring clarity.",
+      "Your dreams are planting roots.",
+      "You will dance with delight.",
+      "A quiet yes will echo loudly.",
+      "You are the calm in someone’s storm.",
+      "A golden thread connects you to joy.",
+      "You will be surprised by your own strength.",
+      "A soft glow surrounds your future.",
+      "You are walking toward wonder.",
+      "A kind word will return to you.",
+      "You will find magic in the mundane.",
+      "Your light will guide others home.",
+      "A sweet memory will revisit you.",
+      "You are the answer to someone’s prayer.",
+      "A gentle shift will bring peace.",
+      "You will laugh at the perfect moment.",
+      "Your intuition is whispering truth.",
+      "A quiet victory is near.",
+      "You are growing in beautiful ways.",
+      "A new chapter begins with a smile.",
+      "You will be wrapped in warmth.",
+      "A tiny spark will ignite a big idea.",
+      "You are protected by unseen grace.",
+      "A kind stranger will cross your path.",
+      "You will feel deeply understood.",
+      "Your joy is contagious.",
+      "A soft yes will change everything.",
+      "You are closer than you think.",
+      "A playful moment will lift your spirit.",
+      "You will be gently surprised.",
+      "Your voice will be heard clearly.",
+      "A peaceful answer will arrive soon.",
+      "You are blooming in your own time.",
+      "A quiet truth will set you free.",
+      "You will be hugged by the universe.",
+      "Your laughter will echo in hearts.",
+      "A new beginning is already unfolding.",
+      "You are the light in someone’s fog.",
+      "A secret wish will be granted.",
+      "You will feel beautifully seen.",
+      "Your kindness will ripple outward.",
+      "A soft breeze will carry your hopes.",
+      "You are the magic you seek.",
+      "A gentle nudge will guide you forward.",
+      "You will be met with grace.",
+      "Your path is lined with golden moments.",
+      "A joyful surprise is around the corner.",
+      "You are a quiet miracle.",
+      "A new friend will feel like home.",
+      "You will be kissed by clarity.",
+      "Your dreams are listening.",
+      "A warm light will find you.",
+      "You are the calm in the chaos.",
+      "A tiny step will lead to wonder.",
+      "You will feel deeply aligned.",
+      "Your heart will sing with joy.",
+      "A soft glow will surround your choices.",
+      "You are held by gentle forces.",
+      "A playful idea will spark delight.",
+      "You will be gently uplifted.",
+      "Your presence is a gift.",
+      "A quiet moment will reveal truth.",
+      "You are walking in harmony.",
+      "A sweet answer will arrive soon.",
+      "You will be embraced by possibility.",
+      "Your courage will open doors.",
+      "A magical moment will find you.",
+      "You are the beginning of something beautiful."
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const drawButton = document.getElementById("drawButton");
+      const fortuneDisplay = document.getElementById("fortuneDisplay");
+      const questionInput = document.getElementById("questionInput");
+      const bowl = document.getElementById("bowl");
+
+      drawButton.addEventListener("click", () => {
+        const question = questionInput.value.trim();
+        if (!question) {
+          alert("Please ask a question first!");
+          return;
+        }
+
+        bowl.classList.add("reveal");
+                setTimeout(() => {
+          const randomIndex = Math.floor(Math.random() * fortunes.length);
+          const fortune = fortunes[randomIndex];
+
+          fortuneDisplay.textContent = `"${fortune}"`;
+          fortuneDisplay.classList.remove("hidden");
+
+          // Remove the animation class after it finishes
+          setTimeout(() => {
+            bowl.classList.remove("reveal");
+          }, 1000);
+        }, 100);
+      });
+    });
+  </script>
+
+
+
+
+
+  
