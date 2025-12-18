@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-adsense-account" content="ca-pub-1200109181407050">
+  <title>Playwright and Typescript Automation Basics Quiz</title>
+  <style>
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      margin: 40px auto;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+  
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 40px;
+    }
+  
+    .quiz-page {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+  
+    .question {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+  
+    .question h3 {
+      margin-bottom: 10px;
+      color: #34495e;
+    }
+  
+    .question label {
+      display: block;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+  
+    input[type="radio"] {
+      margin-right: 8px;
+    }
+  
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 10px 5px 30px 0;
+      transition: background-color 0.2s ease;
+    }
+  
+    button:hover {
+      background-color: #2980b9;
+    }
+  
+    .result {
+      font-size: 18px;
+      font-weight: bold;
+      color: #27ae60;
+      margin-top: 20px;
+      text-align: center;
+    }
+  
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hall-of-fame {
+  margin-top: 40px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.hall-of-fame h2 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+#hof-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+#hof-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.nickname-entry {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.nickname-entry input {
+  padding: 8px;
+  width: 60%;
+  max-width: 300px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+
+  </style>
+  
+  
+</head>
+<body>
+  <header class="quiz-header">
+    <img src="logoLastmotto.png" alt="Daily QA Motto Logo" class="logo" width="100px" img="center" />
+    <div class="header-text">
+      <h1>🎯 Playwright and Typescript Automation Basics Quiz</h1>
+      <p class="tagline">Sharpen your skills. One question at a time.</p>
+    </div>
+  </header>
+  
+
+
+  <form id="quizForm">
+
+    <div class="quiz-page" id="page1" style="display: block;">
+      <div class="question">
+        <h3>1. What browsers are supported in Playwright?</h3>
+        <label><input type="radio" name="q1" value="a"> Only Chromium</label>
+        <label><input type="radio" name="q1" value="b"> Chromium, Firefox, and WebKit</label>
+        <label><input type="radio" name="q1" value="c"> Only Safari</label>
+      </div>
+      
+      <div class="question">
+        <h3>2. How do you install Playwright?</h3>
+        <label><input type="radio" name="q2" value="a"> npm install playwright-core</label>
+        <label><input type="radio" name="q2" value="b"> npm init playwright@latest</label>
+        <label><input type="radio" name="q2" value="c"> yarn playwright setup</label>
+      </div>
+      
+      <div class="question">
+        <h3>3. How do you launch Chromium in Playwright?</h3>
+        <label><input type="radio" name="q3" value="a"> chromium.start()</label>
+        <label><input type="radio" name="q3" value="b"> await chromium.launch({ headless: false })</label>
+        <label><input type="radio" name="q3" value="c"> browser.open('chromium')</label>
+      </div>
+      
+      <div class="question">
+        <h3>4. How do you navigate to a URL?</h3>
+        <label><input type="radio" name="q4" value="a"> page.visit()</label>
+        <label><input type="radio" name="q4" value="b"> page.goto('https://example.com')</label>
+        <label><input type="radio" name="q4" value="c"> browser.navigate()</label>
+      </div>
+      
+      <div class="question">
+        <h3>5. How do you click a button with text “Submit”?</h3>
+        <label><input type="radio" name="q5" value="a"> page.click('Submit')</label>
+        <label><input type="radio" name="q5" value="b"> page.getByRole('button', { name: 'Submit' }).click()</label>
+        <label><input type="radio" name="q5" value="c"> page.press('Submit')</label>
+      </div>
+      
+      <div class="question">
+        <h3>6. How do you fill a form field?</h3>
+        <label><input type="radio" name="q6" value="a"> page.input('email', 'test')</label>
+        <label><input type="radio" name="q6" value="b"> page.fill('#email', 'test@example.com')</label>
+        <label><input type="radio" name="q6" value="c"> page.set('#email', 'test')</label>
+      </div>
+      
+      <div class="question">
+        <h3>7. How do you select an option from a dropdown?</h3>
+        <label><input type="radio" name="q7" value="a"> page.choose('#country', 'RO')</label>
+        <label><input type="radio" name="q7" value="b"> page.selectOption('#country', 'RO')</label>
+        <label><input type="radio" name="q7" value="c"> page.pick('#country', 'RO')</label>
+      </div>
+      
+      <div class="question">
+        <h3>8. How do you assert a page title?</h3>
+        <label><input type="radio" name="q8" value="a"> expect(page).title().toBe('Dashboard')</label>
+        <label><input type="radio" name="q8" value="b"> await expect(page).toHaveTitle(/Dashboard/)</label>
+        <label><input type="radio" name="q8" value="c"> assert(page.title == 'Dashboard')</label>
+      </div>
+      
+      <div class="question">
+        <h3>9. How do you check if an element is visible?</h3>
+        <label><input type="radio" name="q9" value="a"> expect(page.locator('#logout')).visible()</label>
+        <label><input type="radio" name="q9" value="b"> await expect(page.locator('#logout')).toBeVisible()</label>
+        <label><input type="radio" name="q9" value="c"> page.checkVisible('#logout')</label>
+      </div>
+      
+      <div class="question">
+        <h3>10. How do you take a full-page screenshot?</h3>
+        <label><input type="radio" name="q10" value="a"> page.capture('full')</label>
+        <label><input type="radio" name="q10" value="b"> await page.screenshot({ path: 'full.png', fullPage: true })</label>
+        <label><input type="radio" name="q10" value="c"> page.snapshot('full')</label>
+      </div>
+      
+      <button type="button" onclick="showPage(2)">Next →</button>
+    </div>
+    <div class="quiz-page" id="page2" style="display: none;">
+      <div class="question">
+        <h3>11. How do you write a test that runs only in Chromium?</h3>
+        <label><input type="radio" name="q11" value="a"> test.only('chromium')</label>
+        <label><input type="radio" name="q11" value="b"> test.use({ browserName: 'chromium' })</label>
+        <label><input type="radio" name="q11" value="c"> test.chromium.only()</label>
+      </div>
+    
+      <div class="question">
+        <h3>12. How do you take a full-page screenshot?</h3>
+        <label><input type="radio" name="q12" value="a"> page.capture('full')</label>
+        <label><input type="radio" name="q12" value="b"> await page.screenshot({ path: 'full.png', fullPage: true })</label>
+        <label><input type="radio" name="q12" value="c"> page.snapshot('full')</label>
+      </div>
+    
+      <div class="question">
+        <h3>13. How do you enable tracing in Playwright?</h3>
+        <label><input type="radio" name="q13" value="a"> trace.enable()</label>
+        <label><input type="radio" name="q13" value="b"> use: { trace: 'on' }</label>
+        <label><input type="radio" name="q13" value="c"> playwright.trace(true)</label>
+      </div>
+    
+      <div class="question">
+        <h3>14. How do you pause a test for debugging?</h3>
+        <label><input type="radio" name="q14" value="a"> await page.pause()</label>
+        <label><input type="radio" name="q14" value="b"> page.debug()</label>
+        <label><input type="radio" name="q14" value="c"> test.pause()</label>
+      </div>
+    
+      <div class="question">
+        <h3>15. How do you upload a file in Playwright?</h3>
+        <label><input type="radio" name="q15" value="a"> page.uploadFile('file.txt')</label>
+        <label><input type="radio" name="q15" value="b"> page.setInputFiles('input[type="file"]', 'file.txt')</label>
+        <label><input type="radio" name="q15" value="c"> page.attachFile('file.txt')</label>
+      </div>
+    
+      <div class="question">
+        <h3>16. How do you handle browser alerts?</h3>
+        <label><input type="radio" name="q16" value="a"> page.alert.accept()</label>
+        <label><input type="radio" name="q16" value="b"> page.on('dialog', dialog => dialog.accept())</label>
+        <label><input type="radio" name="q16" value="c"> browser.dialog.accept()</label>
+      </div>
+    
+      <div class="question">
+        <h3>17. How do you test multiple tabs?</h3>
+        <label><input type="radio" name="q17" value="a"> page.newTab()</label>
+        <label><input type="radio" name="q17" value="b"> context.newPage() and page.waitForEvent('popup')</label>
+        <label><input type="radio" name="q17" value="c"> browser.tab.open()</label>
+      </div>
+    
+      <div class="question">
+        <h3>18. How do you save login state in Playwright?</h3>
+        <label><input type="radio" name="q18" value="a"> page.saveSession()</label>
+        <label><input type="radio" name="q18" value="b"> storageState: 'auth.json'</label>
+        <label><input type="radio" name="q18" value="c"> browser.saveAuth()</label>
+      </div>
+    
+      <div class="question">
+        <h3>19. How do you test APIs in Playwright?</h3>
+        <label><input type="radio" name="q19" value="a"> page.api.get()</label>
+        <label><input type="radio" name="q19" value="b"> request.newContext().get()</label>
+        <label><input type="radio" name="q19" value="c"> playwright.apiRequest()</label>
+      </div>
+    
+      <div class="question">
+        <h3>20. How do you test file downloads?</h3>
+        <label><input type="radio" name="q20" value="a"> page.download('file')</label>
+        <label><input type="radio" name="q20" value="b"> const [download] = await Promise.all([ page.waitForEvent('download'), page.click('button') ])</label>
+        <label><input type="radio" name="q20" value="c"> page.saveFile('file.txt')</label>
+      </div>
+    
+      <button type="button" onclick="showPage(1)">← Previous</button>
+      <button type="button" onclick="showPage(3)">Next →</button>
+    </div>
+
+    <div class="quiz-page" id="page3" style="display: none;">
+      <div class="question">
+        <h3>21. How do you run a single test file?</h3>
+        <label><input type="radio" name="q21" value="a"> playwright run test.spec.ts</label>
+        <label><input type="radio" name="q21" value="b"> npx playwright test tests/example.spec.ts</label>
+        <label><input type="radio" name="q21" value="c"> node test.spec.ts</label>
+      </div>
+    
+      <div class="question">
+        <h3>22. How do you skip or isolate a test?</h3>
+        <label><input type="radio" name="q22" value="a"> test.skip() / test.only()</label>
+        <label><input type="radio" name="q22" value="b"> test.ignore()</label>
+        <label><input type="radio" name="q22" value="c"> test.hide()</label>
+      </div>
+    
+      <div class="question">
+        <h3>23. How do you run tests in headless mode?</h3>
+        <label><input type="radio" name="q23" value="a"> npx playwright test --headless</label>
+        <label><input type="radio" name="q23" value="b"> npx playwright test --headed</label>
+        <label><input type="radio" name="q23" value="c"> playwright.headless(true)</label>
+      </div>
+    
+      <div class="question">
+        <h3>24. How do you debug a failing test?</h3>
+        <label><input type="radio" name="q24" value="a"> await page.pause()</label>
+        <label><input type="radio" name="q24" value="b"> test.debug()</label>
+        <label><input type="radio" name="q24" value="c"> browser.pause()</label>
+      </div>
+    
+      <div class="question">
+        <h3>25. How do you generate an HTML report?</h3>
+        <label><input type="radio" name="q25" value="a"> reporter: 'html'</label>
+        <label><input type="radio" name="q25" value="b"> reporter: [['html', { open: 'never' }]]</label>
+        <label><input type="radio" name="q25" value="c"> htmlReport: true</label>
+      </div>
+    
+      <div class="question">
+        <h3>26. How do you integrate Playwright in CI/CD?</h3>
+        <label><input type="radio" name="q26" value="a"> Use playwright.yml</label>
+        <label><input type="radio" name="q26" value="b"> Use npx playwright install and run tests via CLI</label>
+        <label><input type="radio" name="q26" value="c"> Use playwright.run()</label>
+      </div>
+    
+      <div class="question">
+        <h3>27. What is the difference between fill() and type()?</h3>
+        <label><input type="radio" name="q27" value="a"> fill() types slowly, type() clears input</label>
+        <label><input type="radio" name="q27" value="b"> fill() clears input, type() types character by character</label>
+        <label><input type="radio" name="q27" value="c"> They are identical</label>
+      </div>
+    
+      <div class="question">
+        <h3>28. What is the default timeout for page actions?</h3>
+        <label><input type="radio" name="q28" value="a"> 5 seconds</label>
+        <label><input type="radio" name="q28" value="b"> 10 seconds</label>
+        <label><input type="radio" name="q28" value="c"> 30 seconds</label>
+      </div>
+    
+      <div class="question">
+        <h3>29. What is the default timeout for assertions?</h3>
+        <label><input type="radio" name="q29" value="a"> 2 seconds</label>
+        <label><input type="radio" name="q29" value="b"> 5 seconds</label>
+        <label><input type="radio" name="q29" value="c"> 10 seconds</label>
+      </div>
+    
+      <div class="question">
+        <h3>30. How do you verify a URL in Playwright?</h3>
+        <label><input type="radio" name="q30" value="a"> expect(page.url()).toBe('...')</label>
+        <label><input type="radio" name="q30" value="b"> await expect(page).toHaveURL('https://example.com')</label>
+        <label><input type="radio" name="q30" value="c"> page.checkURL()</label>
+      </div>
+    
+      <button type="button" onclick="showPage(2)">← Previous</button>
+      <button type="button" onclick="showPage(4)">Next →</button>
+    </div>
+    
+    <div class="quiz-page" id="page4" style="display: none;">
+      <div class="question">
+        <h3>31. How do you perform click actions in Playwright?</h3>
+        <label><input type="radio" name="q31" value="a"> page.press()</label>
+        <label><input type="radio" name="q31" value="b"> page.click('selector') or locator.click()</label>
+        <label><input type="radio" name="q31" value="c"> page.tap()</label>
+      </div>
+    
+      <div class="question">
+        <h3>32. How do you wait for an element to appear?</h3>
+        <label><input type="radio" name="q32" value="a"> page.waitForSelector()</label>
+        <label><input type="radio" name="q32" value="b"> page.wait()</label>
+        <label><input type="radio" name="q32" value="c"> page.sleep()</label>
+      </div>
+    
+      <div class="question">
+        <h3>33. How do you scroll the page in Playwright?</h3>
+        <label><input type="radio" name="q33" value="a"> page.scrollTo(0, 500)</label>
+        <label><input type="radio" name="q33" value="b"> page.evaluate(() => window.scrollBy(0, 500))</label>
+        <label><input type="radio" name="q33" value="c"> page.scroll(500)</label>
+      </div>
+    
+      <div class="question">
+        <h3>34. How do you retry failed tests?</h3>
+        <label><input type="radio" name="q34" value="a"> test.retry()</label>
+        <label><input type="radio" name="q34" value="b"> Use retries in playwright.config.ts</label>
+        <label><input type="radio" name="q34" value="c"> test.repeat()</label>
+      </div>
+    
+      <div class="question">
+        <h3>35. How do you take a screenshot of a specific element?</h3>
+        <label><input type="radio" name="q35" value="a"> page.screenshot({ element: selector })</label>
+        <label><input type="radio" name="q35" value="b"> locator.screenshot({ path: 'element.png' })</label>
+        <label><input type="radio" name="q35" value="c"> page.captureElement()</label>
+      </div>
+    
+      <div class="question">
+        <h3>36. What is a browser context in Playwright?</h3>
+        <label><input type="radio" name="q36" value="a"> A browser tab</label>
+        <label><input type="radio" name="q36" value="b"> An isolated browser session</label>
+        <label><input type="radio" name="q36" value="c"> A browser extension</label>
+      </div>
+    
+      <div class="question">
+        <h3>37. How do you close a page or browser?</h3>
+        <label><input type="radio" name="q37" value="a"> page.exit()</label>
+        <label><input type="radio" name="q37" value="b"> page.close() or browser.close()</label>
+        <label><input type="radio" name="q37" value="c"> browser.quit()</label>
+      </div>
+    
+      <div class="question">
+        <h3>38. How do you attach a file in an HTML report?</h3>
+        <label><input type="radio" name="q38" value="a"> test.attachFile()</label>
+        <label><input type="radio" name="q38" value="b"> test.info().attach()</label>
+        <label><input type="radio" name="q38" value="c"> report.addFile()</label>
+      </div>
+    
+      <div class="question">
+        <h3>39. Can Playwright automate Windows apps?</h3>
+        <label><input type="radio" name="q39" value="a"> Yes</label>
+        <label><input type="radio" name="q39" value="b"> No</label>
+        <label><input type="radio" name="q39" value="c"> Only with plugins</label>
+      </div>
+    
+      <div class="question">
+        <h3>40. How do you run tests in serial mode?</h3>
+        <label><input type="radio" name="q40" value="a"> test.serial()</label>
+        <label><input type="radio" name="q40" value="b"> test.describe.serial()</label>
+        <label><input type="radio" name="q40" value="c"> test.runSerial()</label>
+      </div>
+    
+
+      <button type="button" onclick="showPage(3)">← Previous</button>
+      <div class="nickname-entry">
+        <label for="nickname">Enter your nickname (optional):</label>
+        <input type="text" id="nickname" name="nickname" maxlength="20" placeholder="e.g. QA Ninja" />
+      </div>
+      
+      <button type="submit" id="submitBtn">✅ Submit Quiz</button>
+      <div class="result" id="result"></div>
+    </div>
+    
+  </form>
+
+  <script>
+   const correctAnswers = {
+  q1: "b",
+  q2: "b",
+  q3: "b",
+  q4: "b",
+  q5: "b",
+  q6: "b",
+  q7: "b",
+  q8: "b",
+  q9: "b",
+  q10: "b",
+  q11: "b",
+  q12: "b",
+  q13: "b",
+  q14: "a",
+  q15: "b",
+  q16: "b",
+  q17: "b",
+  q18: "b",
+  q19: "b",
+  q20: "b",
+  q21: "b",
+  q22: "a",
+  q23: "a",
+  q24: "a",
+  q25: "b",
+  q26: "b",
+  q27: "b",
+  q28: "c",
+  q29: "b",
+  q30: "b",
+  q31: "b",
+  q32: "a",
+  q33: "b",
+  q34: "b",
+  q35: "b",
+  q36: "b",
+  q37: "b",
+  q38: "b",
+  q39: "b",
+  q40: "b"
+};
+
+
+function renderHallOfFame() {
+  const hof = JSON.parse(localStorage.getItem("hallOfFame") || "[]");
+  const list = document.getElementById("hof-list");
+  list.innerHTML = "";
+  hof.reverse().forEach(entry => {
+    const li = document.createElement("li");
+    li.textContent = entry;
+    list.appendChild(li);
+  });
+}
+
+  // Removed redundant declaration of correctAnswers
+
+  document.getElementById("quizForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  let score = 0;
+  let total = Object.keys(correctAnswers).length;
+
+  for (let q in correctAnswers) {
+    const selected = document.querySelector(`input[name="${q}"]:checked`);
+    if (selected && selected.value === correctAnswers[q]) {
+      score++;
+    }
+  }
+
+  // ✅ Set flag AFTER scoring
+  localStorage.setItem("quizSubmitted", "true");
+
+  const nicknameInput = document.getElementById("nickname");
+  const nickname = nicknameInput.value.trim() || "Anonymous";
+  const resultText = `✅ Awesome, ${nickname}! You scored ${score} out of ${total}`;
+  document.getElementById("result").textContent = resultText;
+
+  const hofEntry = `${nickname} – ${score}/${total}`;
+  let hof = JSON.parse(localStorage.getItem("hallOfFame") || "[]");
+  hof.push(hofEntry);
+  hof = hof.slice(-10);
+  localStorage.setItem("hallOfFame", JSON.stringify(hof));
+  renderHallOfFame();
+
+  // ✅ Hide submit button
+  const submitBtn = document.getElementById("submitBtn");
+  if (submitBtn) submitBtn.style.display = "none";
+
+  // ✅ Show restart button
+  const restartBtn = document.getElementById("restartBtn");
+  if (restartBtn) restartBtn.style.display = "inline-block";
+});
+function resetQuiz() {
+  localStorage.removeItem("quizSubmitted");
+  location.reload();
+}
+
+
+localStorage.setItem("quizSubmitted", "true");
+
+
+const nicknameInput = document.getElementById("nickname");
+const nickname = nicknameInput.value.trim() || "Anonymous";
+const resultText = `✅ Awesome, ${nickname}! You scored ${score} out of ${total}`;
+document.getElementById("result").textContent = resultText;
+
+// 🏆 Save to Hall of Fame
+const hofEntry = `${nickname} – ${score}/${total}`;
+let hof = JSON.parse(localStorage.getItem("hallOfFame") || "[]");
+hof.push(hofEntry);
+hof = hof.slice(-10); // Keep only the last 10 scores
+localStorage.setItem("hallOfFame", JSON.stringify(hof));
+renderHallOfFame();
+
+
+  // Load Hall of Fame on page load
+  window.onload = function () {
+  renderHallOfFame();
+
+  // Hide Submit button if quiz was already submitted
+  if (localStorage.getItem("quizSubmitted") === "true") {
+    const submitBtn = document.getElementById("submitBtn");
+    if (submitBtn) submitBtn.style.display = "none";
+
+    const restartBtn = document.getElementById("restartBtn");
+    if (restartBtn) restartBtn.style.display = "inline-block";
+  }
+};
+
+</script>
+
+
+<script>
+  function showPage(pageNum) {
+    const pages = document.querySelectorAll('.quiz-page');
+    pages.forEach(p => p.style.display = 'none');
+    document.getElementById(`page${pageNum}`).style.display = 'block';
+    document.getElementById("restartBtn").style.display = "inline-block";
+  }
+</script>
+
+
+  </script>
+
+  <button id="restartBtn" style="display: none;" onclick="resetQuiz()">🔄 Restart Quiz</button>
+
+  
+
+<section class="hall-of-fame">
+  <h2>🏆 Hall of Fame</h2>
+  <ul id="hof-list">
+    <!-- Scores will be added here -->
+  </ul>
+</section>
+
+</body>
+</html>

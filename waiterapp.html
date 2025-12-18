@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TableMate — Waiter Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #fafafa;
+      --card: #fff;
+      --text: #222;
+      --sub: #666;
+      --border: #e5e7eb;
+      --accent: #0ea5e9;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0; padding: 0;
+    }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .title { font-weight: 600; }
+    .env {
+      display: inline-flex; gap: 8px; align-items: center;
+      font-size: 14px; color: var(--sub);
+    }
+    .container { max-width: 880px; margin: 0 auto; padding: 20px; }
+    .tools {
+      display: grid; gap: 12px;
+      grid-template-columns: 1fr;
+      margin-bottom: 16px;
+    }
+    .tools input, .tools select, .tools button {
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--card);
+    }
+    .tools button.primary { background: var(--accent); color: white; border: none; }
+    .tools small { color: var(--sub); }
+    .signals {
+      display: grid; gap: 12px;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+      display: grid; gap: 8px;
+    }
+    .card.resolved { opacity: 0.6; }
+    .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border);
+    }
+    .badge.waiter_call { border-color: var(--accent); color: var(--accent); }
+    .badge.ask_check { border-color: var(--success); color: var(--success); }
+    .actions { display: inline-flex; gap: 8px; }
+    .actions button { padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
+    .actions button.resolve { background: var(--success); color: white; border: none; }
+    footer {
+      text-align: center; color: var(--sub); font-size: 13px; padding: 24px 0;
+    }
+    @media (min-width: 640px) {
+      .tools { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">TableMate — Waiter Dashboard</div>
+    <div class="env">
+      <span id="envLabel">Demo mode</span>
+      <span id="connectionDot" style="width:10px;height:10px;border-radius:999px;background:#bbb;display:inline-block;"></span>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="tools">
+      <div>
+        <label for="apiBase"><strong>API base</strong></label>
+        <input id="apiBase" placeholder="https://your-ngrok-url.ngrok.app (optional)" />
+        <small>Leave empty for demo mode (localStorage).</small>
+      </div>
+      <div>
+        <label><strong>Refresh</strong></label><br />
+        <button class="primary" id="refreshBtn">Fetch signals</button>
+      </div>
+      <div>
+        <label><strong>Seed demo signal</strong></label><br />
+        <button id="seedBtn">Add sample</button>
+      </div>
+    </div>
+
+    <div class="signals" id="signals"></div>
+
+    <footer>
+      TableMate • Simple, responsive waiter dashboard
+    </footer>
+  </div>
+
+  <script>
+    // Set this to your backend when ready (e.g., https://abcd1234.ngrok.app)
+    let API_BASE = "";
+
+    const envLabel = document.getElementById("envLabel");
+    const dot = document.getElementById("connectionDot");
+    const apiBaseInput = document.getElementById("apiBase");
+    const signalsEl = document.getElementById("signals");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const seedBtn = document.getElementById("seedBtn");
+
+    apiBaseInput.addEventListener("change", () => {
+      API_BASE = apiBaseInput.value.trim();
+      updateEnv();
+    });
+
+    function updateEnv() {
+      const demo = !API_BASE;
+      envLabel.textContent = demo ? "Demo mode" : "Connected to API";
+      dot.style.background = demo ? "#bbb" : "#0ea5e9";
+    }
+
+    // Demo storage
+    function demoGet() {
+      const raw = localStorage.getItem("tablemate_signals") || "[]";
+      return JSON.parse(raw);
+    }
+    function demoSet(list) {
+      localStorage.setItem("tablemate_signals", JSON.stringify(list));
+    }
+    function demoSeed() {
+      const list = demoGet();
+      const id = (list.at(-1)?.id || 0) + 1;
+      const sample = {
+        id,
+        restaurant_id: 1,
+        table_number: String( Math.floor(Math.random()*15)+1 ),
+        type: Math.random() > 0.5 ? "waiter_call" : "ask_check",
+        note: "",
+        created_at: new Date().toISOString(),
+        resolved_at: null
+      };
+      demoSet([sample, ...list]);
+      render([sample, ...list]);
+    }
+
+    async function fetchSignals() {
+      if (!API_BASE) {
+        // Demo: just read localStorage
+        return render(demoGet());
+      }
+      try {
+        const res = await fetch(`${API_BASE}/signals`); // optional if you add GET /signals
+        if (!res.ok) throw new Error("Fetch failed");
+        const data = await res.json();
+        render(data.rows || data); // adapt to your format
+      } catch (e) {
+        console.warn("API fetch failed, falling back to demo:", e);
+        render(demoGet());
+      }
+    }
+
+    async function resolveSignal(id) {
+      if (!API_BASE) {
+        const list = demoGet().map(s => s.id === id ? { ...s, resolved_at: new Date().toISOString() } : s);
+        demoSet(list);
+        render(list);
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/signals/${id}/resolve`, { method: "POST" });
+        if (!res.ok) throw new Error("Resolve failed");
+        await fetchSignals();
+      } catch (e) {
+        alert("Failed to resolve via API. Check your URL.");
+      }
+    }
+
+    function render(signals) {
+      signalsEl.innerHTML = "";
+      if (!signals || signals.length === 0) {
+        signalsEl.innerHTML = `<div class="card"><em>No signals yet.</em></div>`;
+        return;
+      }
+      signals
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .forEach(s => {
+          const card = document.createElement("div");
+          card.className = `card ${s.resolved_at ? "resolved" : ""}`;
+          card.innerHTML = `
+            <div class="row">
+              <div>
+                <div><strong>Table ${s.table_number}</strong></div>
+                <div class="badge ${s.type}">
+                  ${s.type === "waiter_call" ? "Waiter call" : "Ask for check"}
+                </div>
+              </div>
+              <div class="actions">
+                ${s.resolved_at ? `<span style="color:var(--success);">Resolved</span>`
+                  : `<button class="resolve" onclick="resolveSignal(${s.id})">Resolve</button>`}
+              </div>
+            </div>
+            <div class="row" style="justify-content:flex-start;color:var(--sub);font-size:13px;">
+              <span>Created: ${new Date(s.created_at).toLocaleString()}</span>
+              ${s.resolved_at ? `<span style="margin-left:12px;">Resolved: ${new Date(s.resolved_at).toLocaleString()}</span>` : ""}
+            </div>
+          `;
+          signalsEl.appendChild(card);
+        });
+    }
+
+    // Wire up controls
+    refreshBtn.addEventListener("click", fetchSignals);
+    seedBtn.addEventListener("click", demoSeed);
+
+    // Initial boot
+    updateEnv();
+    render(demoGet());
+  </script>
+</body>
+</html>

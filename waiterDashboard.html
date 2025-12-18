@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TableMate — Diner App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 20px; background: #fafafa; color: #222; }
+    h1 { margin-bottom: 16px; }
+    .menu { margin-top: 24px; }
+    .category { margin-top: 20px; }
+    .item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+    .actions { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    button { padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; background: #fff; cursor: pointer; }
+    button:hover { background: #f0f0f0; }
+    .reservation { margin-top: 24px; display: grid; gap: 8px; max-width: 360px; }
+    input { padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Welcome to TableMate</h1>
+
+  <h2>Menu</h2>
+  <div id="menu" class="menu"></div>
+
+  <h2>Actions</h2>
+  <div class="actions">
+    <input id="tableNumber" placeholder="Table number" />
+    <button onclick="callWaiter()">Call waiter</button>
+    <input id="tableNumberCheck" placeholder="Table number" />
+    <button onclick="askForCheck()">Ask for the check</button>
+  </div>
+
+  <h2>Make a reservation</h2>
+  <div class="reservation">
+    <input id="name" placeholder="Your name" />
+    <input id="phone" placeholder="Phone (optional)" />
+    <input id="party" type="number" placeholder="Party size" />
+    <input id="time" type="datetime-local" />
+    <input id="table" placeholder="Preferred table (optional)" />
+    <button onclick="makeReservation()">Reserve</button>
+  </div>
+
+  <script>
+    // Replace with your backend/ngrok URL when ready
+    const API = "";
+
+    async function loadMenu() {
+      if (!API) {
+        // Demo menu
+        const demo = [
+          { category: "Starters", name: "Bruschetta", description: "Tomato & basil", price: 18 },
+          { category: "Mains", name: "Grilled Salmon", description: "Lemon butter sauce", price: 54 },
+          { category: "Desserts", name: "Tiramisu", description: "Classic Italian", price: 24 }
+        ];
+        renderMenu(demo);
+        return;
+      }
+      const res = await fetch(`${API}/menu?restaurant_id=1`);
+      const data = await res.json();
+      const items = data.items.map(i => ({
+        category: data.categories.find(c => c.id === i.category_id)?.name || "Other",
+        name: i.name, description: i.description, price: i.price
+      }));
+      renderMenu(items);
+    }
+
+    function renderMenu(items) {
+      const menuDiv = document.getElementById("menu");
+      menuDiv.innerHTML = "";
+      const grouped = {};
+      items.forEach(i => {
+        if (!grouped[i.category]) grouped[i.category] = [];
+        grouped[i.category].push(i);
+      });
+      for (const [cat, list] of Object.entries(grouped)) {
+        const catEl = document.createElement("div");
+        catEl.className = "category";
+        catEl.innerHTML = `<h3>${cat}</h3>`;
+        list.forEach(i => {
+          const el = document.createElement("div");
+          el.className = "item";
+          el.innerHTML = `<div><strong>${i.name}</strong><br/><small>${i.description}</small></div><div>${Number(i.price).toFixed(2)}</div>`;
+          catEl.appendChild(el);
+        });
+        menuDiv.appendChild(catEl);
+      }
+    }
+
+    async function callWaiter() {
+      const table = document.getElementById("tableNumber").value.trim();
+      if (!table) return alert("Enter table number");
+      if (!API) return alert("Demo mode: waiter called");
+      await fetch(`${API}/signals`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table_number: table, type: "waiter_call" })
+      });
+      alert("Waiter called");
+    }
+
+    async function askForCheck() {
+      const table = document.getElementById("tableNumberCheck").value.trim();
+      if (!table) return alert("Enter table number");
+      if (!API) return alert("Demo mode: check requested");
+      await fetch(`${API}/signals`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table_number: table, type: "ask_check" })
+      });
+      alert("Check requested");
+    }
+
+    async function makeReservation() {
+      const payload = {
+        customer_name: document.getElementById("name").value.trim(),
+        customer_phone: document.getElementById("phone").value.trim(),
+        party_size: Number(document.getElementById("party").value),
+        reservation_time: document.getElementById("time").value,
+        table_number: document.getElementById("table").value.trim()
+      };
+      if (!payload.customer_name || !payload.party_size || !payload.reservation_time) {
+        return alert("Fill name, party size, and time");
+      }
+      if (!API) return alert("Demo mode: reservation submitted");
+      const res = await fetch(`${API}/reservations`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (!res.ok) return alert(json.error || "Reservation failed");
+      alert("Reservation submitted");
+    }
+
+    loadMenu();
+  </script>
+</body>
+</html>
