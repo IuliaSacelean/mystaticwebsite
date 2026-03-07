@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tarot App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Tarot Reading</h1>
+
+  <div class="controls">
+    <button id="singleBtn">Single Card</button>
+    <button id="spreadBtn">3‑Card Spread</button>
+  </div>
+
+  <div id="singleCard" class="hidden reading">
+    <button id="drawOne">Draw a Card</button>
+    <div class="card-container"></div>
+  </div>
+
+  <div id="threeCard" class="hidden reading">
+    <button id="drawThree">Draw 3 Cards</button>
+    <div class="spread">
+      <div class="slot" data-pos="Past"></div>
+      <div class="slot" data-pos="Present"></div>
+      <div class="slot" data-pos="Future"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

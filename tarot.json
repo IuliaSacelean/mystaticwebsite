@@ -1,0 +1,604 @@
+[
+  {
+    "name": "The Fool",
+    "arcana": "Major",
+    "img": "assets/cards/TheFool.png",
+    "upright": "Beginnings, innocence, spontaneity, a free spirit.",
+    "reversed": "Recklessness, hesitation, fear of the unknown."
+  },
+  {
+    "name": "The Magician",
+    "arcana": "Major",
+    "img": "assets/cards/TheMagician.png",
+    "upright": "Manifestation, resourcefulness, inspired action.",
+    "reversed": "Manipulation, untapped potential, illusions."
+  },
+  {
+    "name": "The High Priestess",
+    "arcana": "Major",
+    "img": "assets/cards/TheHighPriestess.jpg",
+    "upright": "Intuition, mystery, inner knowledge.",
+    "reversed": "Secrets, withdrawal, ignoring intuition."
+  },
+  {
+    "name": "The Empress",
+    "arcana": "Major",
+    "img": "assets/cards/TheEmpress.jpg",
+    "upright": "Abundance, nurturing, creativity.",
+    "reversed": "Dependence, creative block, insecurity."
+  },
+  {
+    "name": "The Emperor",
+    "arcana": "Major",
+    "img": "assets/cards/TheEmperor.jpg",
+    "upright": "Authority, structure, stability.",
+    "reversed": "Control issues, rigidity, domination."
+  },
+  {
+    "name": "The Hierophant",
+    "arcana": "Major",
+    "img": "assets/cards/TheHierophant.jpg",
+    "upright": "Tradition, spiritual wisdom, conformity.",
+    "reversed": "Rebellion, personal beliefs, freedom."
+  },
+  {
+    "name": "The Lovers",
+    "arcana": "Major",
+    "img": "assets/cards/TheLovers.jpg",
+    "upright": "Love, harmony, choices, alignment.",
+    "reversed": "Disharmony, imbalance, difficult choices."
+  },
+  {
+    "name": "The Chariot",
+    "arcana": "Major",
+    "img": "assets/cards/TheChariot.jpg",
+    "upright": "Willpower, determination, success.",
+    "reversed": "Lack of control, aggression, obstacles."
+  },
+  {
+    "name": "Strength",
+    "arcana": "Major",
+    "img": "assets/cards/Strength.jpg",
+    "upright": "Courage, compassion, inner strength.",
+    "reversed": "Self-doubt, weakness, insecurity."
+  },
+  {
+    "name": "The Hermit",
+    "arcana": "Major",
+    "img": "assets/cards/TheHermit.jpg",
+    "upright": "Introspection, solitude, inner guidance.",
+    "reversed": "Isolation, loneliness, withdrawal."
+  },
+  {
+    "name": "Wheel of Fortune",
+    "arcana": "Major",
+    "img": "assets/cards/WheelOfFortune.jpg",
+    "upright": "Change, destiny, luck, turning point.",
+    "reversed": "Resistance to change, bad luck, delays."
+  },
+  {
+    "name": "Justice",
+    "arcana": "Major",
+    "img": "assets/cards/Justice.jpg",
+    "upright": "Fairness, truth, law, balance.",
+    "reversed": "Dishonesty, unfairness, imbalance."
+  },
+  {
+    "name": "The Hanged Man",
+    "arcana": "Major",
+    "img": "assets/cards/TheHangedMan.jpg",
+    "upright": "Surrender, new perspective, letting go.",
+    "reversed": "Stalling, indecision, resistance."
+  },
+  {
+    "name": "Death",
+    "arcana": "Major",
+    "img": "assets/cards/Death.jpg",
+    "upright": "Transformation, endings, transition.",
+    "reversed": "Resistance to change, stagnation."
+  },
+  {
+    "name": "Temperance",
+    "arcana": "Major",
+    "img": "assets/cards/Temperance.jpg",
+    "upright": "Balance, patience, moderation.",
+    "reversed": "Imbalance, excess, conflict."
+  },
+  {
+    "name": "The Devil",
+    "arcana": "Major",
+    "img": "assets/cards/TheDevil.jpg",
+    "upright": "Bondage, addiction, materialism.",
+    "reversed": "Release, freedom, breaking chains."
+  },
+  {
+    "name": "The Tower",
+    "arcana": "Major",
+    "img": "assets/cards/TheTower.jpg",
+    "upright": "Sudden change, upheaval, revelation.",
+    "reversed": "Avoidance, fear of change, delayed disaster."
+  },
+  {
+    "name": "The Star",
+    "arcana": "Major",
+    "img": "assets/cards/TheStar.jpg",
+    "upright": "Hope, inspiration, renewal.",
+    "reversed": "Despair, disconnection, doubt."
+  },
+  {
+    "name": "The Moon",
+    "arcana": "Major",
+    "img": "assets/cards/TheMoon.jpg",
+    "upright": "Illusion, intuition, subconscious.",
+    "reversed": "Clarity, release of fear, truth revealed."
+  },
+  {
+    "name": "The Sun",
+    "arcana": "Major",
+    "img": "assets/cards/TheSun.jpg",
+    "upright": "Joy, success, vitality.",
+    "reversed": "Temporary sadness, lack of clarity."
+  },
+  {
+    "name": "Judgement",
+    "arcana": "Major",
+    "img": "assets/cards/Judgement.jpg",
+    "upright": "Awakening, renewal, reflection.",
+    "reversed": "Self-doubt, ignoring a calling."
+  },
+  {
+    "name": "The World",
+    "arcana": "Major",
+    "img": "assets/cards/TheWorld.jpg",
+    "upright": "Completion, accomplishment, wholeness.",
+    "reversed": "Delays, unfinished business."
+  },
+  {
+    "name": "Ace of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/AceOfWands.jpg",
+    "upright": "Inspiration, new opportunities, growth, potential.",
+    "reversed": "Delays, lack of direction, missed chances."
+  },
+  {
+    "name": "Two of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/TwoOfWands.jpg",
+    "upright": "Planning, decisions, future vision.",
+    "reversed": "Fear of change, bad planning, hesitation."
+  },
+  {
+    "name": "Three of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/ThreeOfWands.jpg",
+    "upright": "Expansion, foresight, progress.",
+    "reversed": "Delays, obstacles, frustration."
+  },
+  {
+    "name": "Four of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/FourOfWands.jpg",
+    "upright": "Celebration, harmony, homecoming.",
+    "reversed": "Conflict, instability, tension."
+  },
+  {
+    "name": "Five of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/FiveOfWands.jpg",
+    "upright": "Competition, conflict, rivalry.",
+    "reversed": "Avoiding conflict, resolution, compromise."
+  },
+  {
+    "name": "Six of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/SixOfWands.jpg",
+    "upright": "Victory, recognition, success.",
+    "reversed": "Ego, lack of recognition, fall from grace."
+  },
+  {
+    "name": "Seven of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/SevenOfWands.jpg",
+    "upright": "Defense, perseverance, standing ground.",
+    "reversed": "Giving up, overwhelmed, backing down."
+  },
+  {
+    "name": "Eight of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/EightOfWands.jpg",
+    "upright": "Speed, movement, swift progress.",
+    "reversed": "Delays, frustration, miscommunication."
+  },
+  {
+    "name": "Nine of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/NineOfWands.jpg",
+    "upright": "Resilience, persistence, boundaries.",
+    "reversed": "Exhaustion, defensiveness, giving up."
+  },
+  {
+    "name": "Ten of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/TenOfWands.jpg",
+    "upright": "Burden, responsibility, hard work.",
+    "reversed": "Burnout, release, delegation."
+  },
+  {
+    "name": "Page of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/PageOfWands.jpg",
+    "upright": "Exploration, excitement, discovery.",
+    "reversed": "Lack of direction, procrastination."
+  },
+  {
+    "name": "Knight of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/KnightOfWands.jpg",
+    "upright": "Energy, passion, adventure.",
+    "reversed": "Impulsiveness, delays, recklessness."
+  },
+  {
+    "name": "Queen of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/QueenOfWands.jpg",
+    "upright": "Confidence, independence, determination.",
+    "reversed": "Jealousy, insecurity, introversion."
+  },
+  {
+    "name": "King of Wands",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "img": "assets/cards/KingOfWands.jpg",
+    "upright": "Leadership, vision, boldness.",
+    "reversed": "Impulsiveness, arrogance, haste."
+  },
+  {
+    "name": "Ace of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/AceOfCups.jpg",
+    "upright": "Love, compassion, new feelings, emotional awakening.",
+    "reversed": "Emotional block, emptiness, repressed feelings."
+  },
+  {
+    "name": "Two of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/TwoOfCups.jpg",
+    "upright": "Partnership, unity, mutual attraction.",
+    "reversed": "Breakup, imbalance, tension between partners."
+  },
+  {
+    "name": "Three of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/ThreeOfCups.jpg",
+    "upright": "Friendship, celebration, community.",
+    "reversed": "Overindulgence, gossip, isolation."
+  },
+  {
+    "name": "Four of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/FourOfCups.jpg",
+    "upright": "Apathy, contemplation, reevaluation.",
+    "reversed": "Awakening, new opportunities, renewed interest."
+  },
+  {
+    "name": "Five of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/FiveOfCups.jpg",
+    "upright": "Loss, grief, disappointment.",
+    "reversed": "Acceptance, forgiveness, moving on."
+  },
+  {
+    "name": "Six of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/SixOfCups.jpg",
+    "upright": "Nostalgia, innocence, memories.",
+    "reversed": "Living in the past, stuckness, moving forward."
+  },
+  {
+    "name": "Seven of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/SevenOfCups.jpg",
+    "upright": "Choices, fantasy, imagination, possibilities.",
+    "reversed": "Clarity, focus, making a decision."
+  },
+  {
+    "name": "Eight of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/EightOfCups.jpg",
+    "upright": "Walking away, introspection, deeper meaning.",
+    "reversed": "Fear of change, stagnation, avoidance."
+  },
+  {
+    "name": "Nine of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/NineOfCups.jpg",
+    "upright": "Contentment, satisfaction, wishes fulfilled.",
+    "reversed": "Dissatisfaction, indulgence, unfulfilled desires."
+  },
+  {
+    "name": "Ten of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/TenOfCups.jpg",
+    "upright": "Harmony, fulfillment, emotional happiness.",
+    "reversed": "Disconnection, conflict, broken harmony."
+  },
+  {
+    "name": "Page of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/PageOfCups.jpg",
+    "upright": "Creativity, intuition, curiosity, emotional openness.",
+    "reversed": "Emotional immaturity, insecurity, creative block."
+  },
+  {
+    "name": "Knight of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/KnightOfCups.jpg",
+    "upright": "Romance, charm, imagination, idealism.",
+    "reversed": "Moodiness, disappointment, unrealistic expectations."
+  },
+  {
+    "name": "Queen of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/QueenOfCups.jpg",
+    "upright": "Compassion, calm, intuition, emotional depth.",
+    "reversed": "Dependence, emotional insecurity, hypersensitivity."
+  },
+  {
+    "name": "King of Cups",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "img": "assets/cards/KingOfCups.jpg",
+    "upright": "Balance, emotional control, generosity, wisdom.",
+    "reversed": "Manipulation, moodiness, emotional volatility."
+  },
+  {
+    "name": "Ace of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/AceOfSwords.jpg",
+    "upright": "Breakthrough, clarity, truth, new ideas.",
+    "reversed": "Confusion, chaos, misinformation."
+  },
+  {
+    "name": "Two of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/TwoOfSwords.jpg",
+    "upright": "Indecision, stalemate, difficult choices.",
+    "reversed": "Information overload, confusion, indecision breaking."
+  },
+  {
+    "name": "Three of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/ThreeOfSwords.jpg",
+    "upright": "Heartbreak, sorrow, grief, emotional pain.",
+    "reversed": "Recovery, forgiveness, releasing pain."
+  },
+  {
+    "name": "Four of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/FourOfSwords.jpg",
+    "upright": "Rest, recovery, contemplation, restoration.",
+    "reversed": "Restlessness, burnout, mental overload."
+  },
+  {
+    "name": "Five of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/FiveOfSwords.jpg",
+    "upright": "Conflict, tension, defeat, winning at a cost.",
+    "reversed": "Resolution, reconciliation, moving on."
+  },
+  {
+    "name": "Six of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/SixOfSwords.jpg",
+    "upright": "Transition, moving on, leaving behind difficulties.",
+    "reversed": "Resistance to change, unfinished business."
+  },
+  {
+    "name": "Seven of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/SevenOfSwords.jpg",
+    "upright": "Deception, strategy, cunning, stealth.",
+    "reversed": "Confession, truth revealed, consequences."
+  },
+  {
+    "name": "Eight of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/EightOfSwords.jpg",
+    "upright": "Restriction, fear, paralysis, feeling trapped.",
+    "reversed": "Freedom, empowerment, release from fear."
+  },
+  {
+    "name": "Nine of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/NineOfSwords.jpg",
+    "upright": "Anxiety, worry, fear, nightmares.",
+    "reversed": "Hope, recovery, letting go of fear."
+  },
+  {
+    "name": "Ten of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/TenOfSwords.jpg",
+    "upright": "Painful ending, betrayal, collapse.",
+    "reversed": "Recovery, regeneration, resisting an ending."
+  },
+  {
+    "name": "Page of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/PageOfSwords.jpg",
+    "upright": "Curiosity, ideas, vigilance, communication.",
+    "reversed": "Deception, gossip, haste."
+  },
+  {
+    "name": "Knight of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/KnightOfSwords.jpg",
+    "upright": "Ambition, action, speed, determination.",
+    "reversed": "Recklessness, impatience, scattered energy."
+  },
+  {
+    "name": "Queen of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/QueenOfSwords.jpg",
+    "upright": "Independence, clarity, honesty, perception.",
+    "reversed": "Coldness, bitterness, emotional detachment."
+  },
+  {
+    "name": "King of Swords",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "img": "assets/cards/KingOfSwords.jpg",
+    "upright": "Authority, truth, intellect, discipline.",
+    "reversed": "Manipulation, cruelty, misuse of power."
+  },
+  {
+    "name": "Ace of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/AceOfPentacles.jpg",
+    "upright": "New financial opportunity, prosperity, manifestation.",
+    "reversed": "Lost opportunity, scarcity, poor planning."
+  },
+  {
+    "name": "Two of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/TwoOfPentacles.jpg",
+    "upright": "Balance, adaptability, time management.",
+    "reversed": "Overwhelm, disorganization, imbalance."
+  },
+  {
+    "name": "Three of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/ThreeOfPentacles.jpg",
+    "upright": "Teamwork, collaboration, skill development.",
+    "reversed": "Lack of teamwork, poor planning, disharmony."
+  },
+  {
+    "name": "Four of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/FourOfPentacles.jpg",
+    "upright": "Security, saving, stability, control.",
+    "reversed": "Greed, materialism, letting go."
+  },
+  {
+    "name": "Five of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/FiveOfPentacles.jpg",
+    "upright": "Hardship, loss, isolation, financial struggle.",
+    "reversed": "Recovery, improvement, renewed hope."
+  },
+  {
+    "name": "Six of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/SixOfPentacles.jpg",
+    "upright": "Generosity, charity, giving and receiving.",
+    "reversed": "Strings attached, inequality, selfishness."
+  },
+  {
+    "name": "Seven of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/SevenOfPentacles.jpg",
+    "upright": "Patience, long-term view, investment.",
+    "reversed": "Lack of reward, impatience, wasted effort."
+  },
+  {
+    "name": "Eight of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/EightOfPentacles.jpg",
+    "upright": "Skill-building, hard work, mastery.",
+    "reversed": "Lack of focus, poor quality, shortcuts."
+  },
+  {
+    "name": "Nine of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/NineOfPentacles.jpg",
+    "upright": "Luxury, self-sufficiency, financial independence.",
+    "reversed": "Overindulgence, financial dependence."
+  },
+  {
+    "name": "Ten of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/TenOfPentacles.jpg",
+    "upright": "Wealth, legacy, family, long-term success.",
+    "reversed": "Financial loss, instability, family conflict."
+  },
+  {
+    "name": "Page of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/PageOfPentacles.jpg",
+    "upright": "Ambition, opportunity, study, groundedness.",
+    "reversed": "Laziness, lack of progress, procrastination."
+  },
+  {
+    "name": "Knight of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/KnightOfPentacles.jpg",
+    "upright": "Hard work, responsibility, routine, reliability.",
+    "reversed": "Stagnation, boredom, laziness."
+  },
+  {
+    "name": "Queen of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/QueenOfPentacles.jpg",
+    "upright": "Practicality, nurturing, comfort, security.",
+    "reversed": "Imbalance, work–home conflict, self-neglect."
+  },
+  {
+    "name": "King of Pentacles",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "img": "assets/cards/KingOfPentacles.jpg",
+    "upright": "Wealth, discipline, abundance, leadership.",
+    "reversed": "Greed, stubbornness, material obsession."
+  }
+]
